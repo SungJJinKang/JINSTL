@@ -2,17 +2,14 @@
 
 #include <Allocator/DefaultAllocator.h>
 
-jinStl::allocator::details::AllocatorContainer jinStl::allocator::details::InternalAllocatorContainer{new jinStl::DefaultAllocator()};
+jinStl::allocator::details::AllocatorContainer jinStl::allocator::details::InternalAllocatorContainer{};
 
 void jinStl::allocator::SetGlobalAllocator(Allocator* const allocator)
 {
-	JINSTL_ASSERT(allocator != nullptr);
+	details::InternalAllocatorContainer.SetGlobalAllocator(allocator);
+}
 
-	if(jinStl::allocator::details::InternalAllocatorContainer.GlobalAllocator != nullptr)
-	{
-		delete jinStl::allocator::details::InternalAllocatorContainer.GlobalAllocator;
-		jinStl::allocator::details::InternalAllocatorContainer.GlobalAllocator = nullptr;
-	}
-
-	jinStl::allocator::details::InternalAllocatorContainer.GlobalAllocator = allocator;
+void jinStl::allocator::SetDefaultAllocatorToGlobalAllocator()
+{
+	details::InternalAllocatorContainer.SetDefaultAllocatorToGlobalAllocator();
 }

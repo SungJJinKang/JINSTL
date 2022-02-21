@@ -3,16 +3,24 @@
 
 namespace jinStl
 {
-	class DefaultAllocator : public Allocator
+	namespace allocator
 	{
-	protected:
-		inline void* do_Alloc(const size_t size) final
+		class DefaultAllocator : public jinStl::allocator::Allocator
 		{
-			return new char[size];
-		}
-		inline void do_DeAlloc(char* const ptr) final
-		{
-			delete ptr;
-		}
-	};
+		protected:
+			inline void* do_Alloc(const size_t size) final
+			{
+				return new char[size];
+			}
+			inline void do_DeAlloc(char* const ptr) final
+			{
+				delete ptr;
+			}
+
+			inline void do_clear() final
+			{
+				
+			}
+		};
+	}
 }
