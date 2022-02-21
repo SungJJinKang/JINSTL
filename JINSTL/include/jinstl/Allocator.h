@@ -1,7 +1,6 @@
 #pragma once
 
-#include "Core.h"
-#include "Allocator/AllocatorContainer.h"
+#include "JINSTLCore.h"
 
 namespace jinStl
 {
@@ -15,6 +14,7 @@ namespace jinStl
 			virtual void* do_Alloc(const size_t size) = 0;
 			virtual void do_DeAlloc(char* const ptr) = 0;
 			virtual void do_clear() = 0;
+
 		public:
 
 			Allocator() = default;
@@ -44,15 +44,44 @@ namespace jinStl
 
 		namespace details
 		{
-			extern AllocatorContainer InternalAllocatorContainer;
+			extern Allocator* GetDefaultAllocator();
+			extern Allocator* GlobalAllocator;
+
+			struct DefaultAllocatorToGlobalAllocatorSetter
+			{
+				DefaultAllocatorToGlobalAllocatorSetter()
+				{
+					GlobalAllocator = GetDefaultAllocator();
+				}
+			};
+			
+			extern inline void InitDefaultAllocatorToGlobalAllocatorSetter()
+			{
+				static details::DefaultAllocatorToGlobalAllocatorSetter defaultAllocatorToGlobalAllocatorSetter{};
+			}
 		}
 
-		extern void SetGlobalAllocator(Allocator* const allocator);
-		extern void SetDefaultAllocatorToGlobalAllocator();
-		extern inline Allocator* GetSetGlobalAllocator()
+		extern inline Allocator* GetGlobalAllocator();
+		extern inline void SetDefaultAllocatorToGlobalAllocator();
+		extern inline void SetGlobalAllocator(Allocator* const allocator);
+
+		extern inline void SetGlobalAllocator(Allocator* const allocator)
 		{
-			JINSTL_ASSERT(details::InternalAllocatorContainer.GlobalAllocator != nullptr);
-			return details::InternalAllocatorContainer.GlobalAllocator;
+			JINSTL_ASSERT(allocator != nullptr);
+
+			details::InitDefaultAllocatorToGlobalAllocatorSetter();
+
+			details::GlobalAllocator = allocator;
+		}
+		extern inline void SetDefaultAllocatorToGlobalAllocator()
+		{
+			details::GlobalAllocator = details::GetDefaultAllocator();
+		}
+		extern inline Allocator* GetGlobalAllocator()
+		{
+			details::InitDefaultAllocatorToGlobalAllocatorSetter();
+
+			return details::GlobalAllocator;
 		}
 	}
 }

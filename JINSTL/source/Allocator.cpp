@@ -1,15 +1,10 @@
-#include <Allocator.h>
+#include "Allocator.h"
 
-#include <Allocator/DefaultAllocator.h>
+#include "DefaultAllocator.h"
 
-jinStl::allocator::details::AllocatorContainer jinStl::allocator::details::InternalAllocatorContainer{};
-
-void jinStl::allocator::SetGlobalAllocator(Allocator* const allocator)
+jinStl::allocator::Allocator* jinStl::allocator::details::GlobalAllocator{ GlobalAllocator };
+jinStl::allocator::Allocator* jinStl::allocator::details::GetDefaultAllocator()
 {
-	details::InternalAllocatorContainer.SetGlobalAllocator(allocator);
-}
-
-void jinStl::allocator::SetDefaultAllocatorToGlobalAllocator()
-{
-	details::InternalAllocatorContainer.SetDefaultAllocatorToGlobalAllocator();
+	static DefaultAllocator GlobalDefaultAllocator{};
+	return &GlobalDefaultAllocator;
 }

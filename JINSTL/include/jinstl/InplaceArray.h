@@ -2,12 +2,13 @@
 
 #include <type_traits>
 
+#include "AllocBase.h"
 #include "Allocator.h"
 
 namespace jinStl
 {
 	template <typename ELEMENT_TYPE, size_t LOCAL_BUFFER_ELEMENT_COUNT>
-	class InplaceArray
+	class InplaceArray : public AllocBase
 	{
 	public:
 
@@ -38,6 +39,7 @@ namespace jinStl
 	public:
 
 		InplaceArray();
+		InplaceArray(allocator::Allocator* const allocator);
 		~InplaceArray();
 		InplaceArray(const InplaceArray& arr);
 		InplaceArray(InplaceArray&& arr) noexcept;
@@ -78,7 +80,7 @@ namespace jinStl
 				mBufferBegin[elementIndex].~ELEMENT_TYPE();
 			}
 
-			allocator::GetSetGlobalAllocator()->DeAllocate(mBufferBegin);
+			DeAllocate(mBufferBegin);
 		}
 	}
 
@@ -95,7 +97,7 @@ namespace jinStl
 	{
 		JINSTL_ASSERT(reAllocElementCount > Count());
 
-		ELEMENT_TYPE* const newlyAllocatedBufferBegin = reinterpret_cast<ELEMENT_TYPE*>(allocator::GetSetGlobalAllocator()->Allocate(reAllocElementCount * sizeof(ELEMENT_TYPE)));
+		ELEMENT_TYPE* const newlyAllocatedBufferBegin = reinterpret_cast<ELEMENT_TYPE*>(Allocate(reAllocElementCount * sizeof(ELEMENT_TYPE)));
 
 		const sizeType currentElementCount = Count();
 
@@ -106,7 +108,7 @@ namespace jinStl
 
 		if (mBufferBegin != nullptr)
 		{
-			allocator::GetSetGlobalAllocator()->DeAllocate(mBufferBegin);
+			DeAllocate(mBufferBegin);
 		}
 
 		mBufferBegin = newlyAllocatedBufferBegin;
@@ -125,7 +127,7 @@ namespace jinStl
 
 		if (reAllocElementCount > 0)
 		{
-			newlyAllocatedBufferBegin = reinterpret_cast<ELEMENT_TYPE*>(allocator::GetSetGlobalAllocator()->Allocate(reAllocElementCount * sizeof(ELEMENT_TYPE)));
+			newlyAllocatedBufferBegin = reinterpret_cast<ELEMENT_TYPE*>(Allocate(reAllocElementCount * sizeof(ELEMENT_TYPE)));
 
 			for (sizeType elementIndex = 0; elementIndex < reAllocElementCount; elementIndex++)
 			{
@@ -139,7 +141,7 @@ namespace jinStl
 			(mBufferBegin + elementIndex)->~ELEMENT_TYPE();
 		}
 
-		allocator::GetSetGlobalAllocator()->DeAllocate(mBufferBegin);
+		DeAllocate(mBufferBegin);
 
 		mBufferBegin = newlyAllocatedBufferBegin;
 		mBufferEnd = newlyAllocatedBufferBegin + reAllocElementCount;
@@ -160,6 +162,13 @@ namespace jinStl
 	}
 
 	template <typename ELEMENT_TYPE, size_t LOCAL_BUFFER_ELEMENT_COUNT>
+	InplaceArray<ELEMENT_TYPE, LOCAL_BUFFER_ELEMENT_COUNT>::InplaceArray(allocator::Allocator* const allocator)
+		: AllocBase(allocator)
+	{
+		NullifyBufferPtr();
+	}
+
+	template <typename ELEMENT_TYPE, size_t LOCAL_BUFFER_ELEMENT_COUNT>
 	InplaceArray<ELEMENT_TYPE, LOCAL_BUFFER_ELEMENT_COUNT>::~InplaceArray()
 	{
 		Destroy();
@@ -172,7 +181,7 @@ namespace jinStl
 		const sizeType passedInplaceArrayElementSize = arr.Count();
 		if (passedInplaceArrayElementSize > 0)
 		{
-			mBufferBegin = reinterpret_cast<ELEMENT_TYPE*>(allocator::GetSetGlobalAllocator()->Allocate(passedInplaceArrayElementSize * sizeof(ELEMENT_TYPE)));
+			mBufferBegin = reinterpret_cast<ELEMENT_TYPE*>(Allocate(passedInplaceArrayElementSize * sizeof(ELEMENT_TYPE)));
 			mBufferEnd = mBufferBegin + passedInplaceArrayElementSize;
 			mBufferCapacityEnd = mBufferEnd;
 
@@ -220,7 +229,7 @@ namespace jinStl
 		{
 			Destroy();
 
-			mBufferBegin = reinterpret_cast<ELEMENT_TYPE*>(allocator::GetSetGlobalAllocator()->Allocate(passedInplaceArrayElementCount * sizeof(ELEMENT_TYPE)));
+			mBufferBegin = reinterpret_cast<ELEMENT_TYPE*>(Allocate(passedInplaceArrayElementCount * sizeof(ELEMENT_TYPE)));
 			mBufferEnd = mBufferBegin + passedInplaceArrayElementCount;
 			mBufferCapacityEnd = mBufferEnd;
 

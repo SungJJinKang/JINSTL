@@ -1,5 +1,5 @@
 #pragma once
-#include "../Allocator.h"
+#include "Allocator.h"
 
 #include <cstdlib>
 
@@ -9,7 +9,9 @@ namespace jinStl
 	{
 		class DefaultAllocator : public jinStl::allocator::Allocator
 		{
+
 		protected:
+
 			inline void* do_Alloc(const size_t size) final
 			{
 				return std::malloc(size);
