@@ -58,6 +58,65 @@ TEST(ArrayTest, MoveConstruct)
 	EXPECT_EQ(testArray2.Count(), originalCount);
 }
 
+
+TEST(ArrayTest, CopyAssignment)
+{
+	jinStl::Array<int> testArray1{};
+	testArray1.PushBack(1);
+	testArray1.PushBack(2);
+	testArray1.PushBack(3);
+
+	jinStl::Array<int> testArray2{};
+	testArray2 = testArray1;
+	EXPECT_EQ(testArray1[0], 1);
+	EXPECT_EQ(testArray1[1], 2);
+	EXPECT_EQ(testArray1[2], 3);
+	EXPECT_EQ(testArray2[0], 1);
+	EXPECT_EQ(testArray2[1], 2);
+	EXPECT_EQ(testArray2[2], 3);
+	EXPECT_EQ(testArray1.Count(), testArray2.Count());
+	EXPECT_EQ(testArray2.Capacity(), testArray1.Count());
+
+	const size_t originalCount = testArray2.Count();
+	const size_t originalCapacity = testArray2.Capacity();
+
+	testArray1[0] = 10;
+	testArray1[1] = 1;
+	testArray1[2] = 3;
+	testArray1.~Array();
+	EXPECT_EQ(testArray1.Count(), 0);
+	EXPECT_EQ(testArray1.Capacity(), 0);
+	EXPECT_EQ(testArray1.Empty(), true);
+	EXPECT_EQ(testArray2.Count(), originalCount);
+	EXPECT_EQ(testArray2.Capacity(), originalCapacity);
+	EXPECT_EQ(testArray2[0], 1);
+	EXPECT_EQ(testArray2[1], 2);
+	EXPECT_EQ(testArray2[2], 3);
+}
+
+TEST(ArrayTest, MoveAssignment)
+{
+	jinStl::Array<int> testArray1{};
+	testArray1.PushBack(1);
+	testArray1.PushBack(2);
+	testArray1.PushBack(3);
+
+	const size_t originalCapacity = testArray1.Capacity();
+	const size_t originalCount = testArray1.Count();
+
+	jinStl::Array<int> testArray2{};
+	testArray2 = std::move(testArray1);
+	EXPECT_EQ(testArray1.Capacity(), 0);
+	EXPECT_EQ(testArray1.Count(), 0);
+	EXPECT_EQ(testArray1.Empty(), true);
+
+	EXPECT_EQ(testArray2[0], 1);
+	EXPECT_EQ(testArray2[1], 2);
+	EXPECT_EQ(testArray2[2], 3);
+	EXPECT_EQ(testArray2.Capacity(), originalCapacity);
+	EXPECT_EQ(testArray2.Count(), originalCount);
+}
+
 TEST(ArrayTest, PushBackAndCount)
 {
 	jinStl::Array<int> testArray{};
@@ -471,3 +530,194 @@ namespace test2
 
 }
 
+namespace test3
+{
+	inline extern int ConstructTime = 0;
+	inline extern int DestructTime = 0;
+
+	struct B
+	{
+
+		int value;
+
+		B()
+		{
+			ConstructTime++;
+		}
+
+		B(int a)
+			: value(a)
+		{
+			ConstructTime++;
+		}
+
+		~B()
+		{
+			DestructTime++;
+		}
+	};
+
+	TEST(ArrayTest, ConstructDestructCount3)
+	{
+		jinStl::Array<B> testArray{};
+		testArray.EmplaceBack(2);
+		testArray.EmplaceBack(1);
+		testArray.EmplaceBack(0);
+		testArray.EmplaceBack(0);
+		testArray.EmplaceBack(0);
+		testArray.EmplaceBack(0);
+		testArray.EmplaceBack(0);
+
+		testArray.ResizeCount(2);
+		EXPECT_EQ(ConstructTime, 7);
+		EXPECT_EQ(DestructTime, 5);
+	}
+
+}
+
+namespace test4
+{
+	inline extern int ConstructTime = 0;
+	inline extern int DestructTime = 0;
+
+	struct B
+	{
+
+		int value;
+
+		B()
+		{
+			ConstructTime++;
+		}
+
+		B(int a)
+			: value(a)
+		{
+			ConstructTime++;
+		}
+
+		~B()
+		{
+			DestructTime++;
+		}
+	};
+
+	TEST(ArrayTest, ConstructDestructCount4)
+	{
+		jinStl::Array<B> testArray{};
+		testArray.EmplaceBack(2);
+		testArray.EmplaceBack(1);
+		testArray.EmplaceBack(0);
+		testArray.EmplaceBack(0);
+		testArray.EmplaceBack(0);
+		testArray.EmplaceBack(0);
+		testArray.EmplaceBack(0);
+
+		testArray.Clear();
+		EXPECT_EQ(ConstructTime, 7);
+		EXPECT_EQ(DestructTime, 7);
+	}
+
+}
+
+
+namespace test5
+{
+	inline extern int ConstructTime = 0;
+	inline extern int DestructTime = 0;
+
+	struct B
+	{
+
+		int value;
+		
+		B(int a)
+			: value(a)
+		{
+			ConstructTime++;
+		}
+
+		B(const B& b)
+			: value(b.value)
+		{
+			ConstructTime++;
+		}
+		B(B&& b) noexcept
+			: value(b.value)
+		{
+			
+		}
+		
+		~B()
+		{
+			DestructTime++;
+		}
+	};
+
+	TEST(ArrayTest, ConstructDestructCount5)
+	{
+		jinStl::Array<B> testArray1{};
+		testArray1.EmplaceBack(2);
+		testArray1.EmplaceBack(1);
+		testArray1.EmplaceBack(0);
+
+		EXPECT_EQ(ConstructTime, 3);
+
+		jinStl::Array<B> testArray2{ testArray1 };
+
+		//EXPECT_EQ(ConstructTime, 6);
+	}
+
+}
+
+
+namespace test6
+{
+	inline extern int ConstructTime = 0;
+	inline extern int DestructTime = 0;
+
+	struct B
+	{
+
+		int value;
+
+		B(int a)
+			: value(a)
+		{
+			ConstructTime++;
+		}
+
+		B(const B& b)
+			: value(b.value)
+		{
+			ConstructTime++;
+		}
+		B(B&& b) noexcept
+			: value(b.value)
+		{
+
+		}
+
+		~B()
+		{
+			DestructTime++;
+		}
+	};
+
+	TEST(ArrayTest, ConstructDestructCount6)
+	{
+		jinStl::Array<B> testArray1{};
+		testArray1.EmplaceBack(2);
+		testArray1.EmplaceBack(1);
+		testArray1.EmplaceBack(0);
+
+		EXPECT_EQ(ConstructTime, 3);
+		EXPECT_EQ(DestructTime, 0);
+
+		jinStl::Array<B> testArray2{ std::move(testArray1) };
+
+		EXPECT_EQ(ConstructTime, 3);
+		EXPECT_EQ(DestructTime, 0);
+	}
+
+}
