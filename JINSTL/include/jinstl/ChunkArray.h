@@ -67,7 +67,7 @@ namespace jinStl
 	template <typename ELEMENT_TYPE>
 	void ChunkArray<ELEMENT_TYPE>::ResizeGrow(const sizeType reAllocChunkCount)
 	{
-		assert(reAllocChunkCount > Count());
+		JINSTL_ASSERT(reAllocChunkCount > Count());
 
 		ELEMENT_TYPE* const newlyAllocatedBufferBegin = reinterpret_cast<ELEMENT_TYPE*>(malloc(reAllocChunkCount * sizeof(ELEMENT_TYPE)));
 
@@ -91,7 +91,7 @@ namespace jinStl
 	template <typename ELEMENT_TYPE>
 	void ChunkArray<ELEMENT_TYPE>::ResizeShrink(const sizeType reAllocChunkCount)
 	{
-		assert(reAllocChunkCount < Count());
+		JINSTL_ASSERT(reAllocChunkCount < Count());
 
 		ELEMENT_TYPE* const newlyAllocatedBufferBegin = nullptr;
 
@@ -241,14 +241,14 @@ namespace jinStl
 	template <typename ELEMENT_TYPE>
 	ChunkArray<ELEMENT_TYPE>::reference ChunkArray<ELEMENT_TYPE>::operator[](const sizeType index)
 	{
-		assert(Count() > index);
+		JINSTL_ASSERT(Count() > index);
 		return mArrays[index];
 	}
 
 	template <typename ELEMENT_TYPE>
 	ChunkArray<ELEMENT_TYPE>::const_reference ChunkArray<ELEMENT_TYPE>::operator[](const sizeType index) const
 	{
-		assert(Count() > index);
+		JINSTL_ASSERT(Count() > index);
 		return mArrays[index];
 	}
 
@@ -256,7 +256,7 @@ namespace jinStl
 	void ChunkArray<ELEMENT_TYPE>::Resize(const sizeType targetCount)
 	{
 		const sizeType curretCount = Count();
-		assert(curretCount != targetCount);
+		JINSTL_ASSERT(curretCount != targetCount);
 		if (targetCount > curretCount)
 		{
 			ResizeGrow(targetCount);

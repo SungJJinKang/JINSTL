@@ -1,5 +1,7 @@
 #pragma once
 
+#include <type_traits>
+
 #include "Allocator.h"
 
 namespace jinStl
@@ -28,8 +30,8 @@ namespace jinStl
 
 		void Destroy();
 		void NullifyBufferPtr();
-		void ResizeGrow(const sizeType size);
-		void ResizeShrink(const sizeType size);
+		void CapacityResizeGrow(const sizeType size);
+		void CapacityResizeShrink(const sizeType size);
 
 		void Expand();
 
@@ -53,7 +55,7 @@ namespace jinStl
 		typename const_reference operator[](const sizeType index) const;
 		typename pointer RawPointer();
 		typename const_pointer RawPointer() const;
-		void Resize(const sizeType targetCount);
+		void ResizeCount(const sizeType targetCount);
 		void Clear();
 
 	};
@@ -82,11 +84,11 @@ namespace jinStl
 	}
 
 	template <typename ELEMENT_TYPE>
-	void Array<ELEMENT_TYPE>::ResizeGrow(const sizeType reAllocElementCount)
+	void Array<ELEMENT_TYPE>::CapacityResizeGrow(const sizeType reAllocElementCount)
 	{
-		assert(reAllocElementCount > Count());
+		JINSTL_ASSERT(reAllocElementCount > Count());
 
-		ELEMENT_TYPE* const newlyAllocatedBufferBegin = reinterpret_cast<ELEMENT_TYPE*>(malloc(reAllocElementCount * sizeof(ELEMENT_TYPE)));
+		ELEMENT_TYPE* const newlyAllocatedBufferBegin = reinterpret_cast<ELEMENT_TYPE*>(allocator::GetSetGlobalAllocator()->Allocate(reAllocElementCount * sizeof(ELEMENT_TYPE)));
 
 		const sizeType currentElementCount = Count();
 
@@ -99,28 +101,28 @@ namespace jinStl
 		{
 			allocator::GetSetGlobalAllocator()->DeAllocate(mBufferBegin);
 		}
-
+		
 		mBufferBegin = newlyAllocatedBufferBegin;
 		mBufferEnd = newlyAllocatedBufferBegin + currentElementCount;
 		mBufferCapacityEnd = newlyAllocatedBufferBegin + reAllocElementCount;
 	}
 
 	template <typename ELEMENT_TYPE>
-	void Array<ELEMENT_TYPE>::ResizeShrink(const sizeType reAllocElementCount)
+	void Array<ELEMENT_TYPE>::CapacityResizeShrink(const sizeType reAllocElementCount)
 	{
-		assert(reAllocElementCount < Count());
+		JINSTL_ASSERT(reAllocElementCount < Count());
 
-		ELEMENT_TYPE* const newlyAllocatedBufferBegin = nullptr;
+		ELEMENT_TYPE* newlyAllocatedBufferBegin = nullptr;
 
 		const sizeType currentElementCount = Count();
 
 		if (reAllocElementCount > 0)
 		{
-			newlyAllocatedBufferBegin = reinterpret_cast<ELEMENT_TYPE*>(malloc(reAllocElementCount * sizeof(ELEMENT_TYPE)));
+			newlyAllocatedBufferBegin = reinterpret_cast<ELEMENT_TYPE*>(allocator::GetSetGlobalAllocator()->Allocate(reAllocElementCount * sizeof(ELEMENT_TYPE)));
 
 			for (sizeType elementIndex = 0; elementIndex < reAllocElementCount; elementIndex++)
 			{
-				new (newlyAllocatedBufferBegin + elementIndex) ELEMENT_TYPE(move(mBufferBegin[elementIndex]));
+				new (newlyAllocatedBufferBegin + elementIndex) ELEMENT_TYPE(std::move(mBufferBegin[elementIndex]));
 			}
 		}
 
@@ -133,7 +135,7 @@ namespace jinStl
 		allocator::GetSetGlobalAllocator()->DeAllocate(mBufferBegin);
 
 		mBufferBegin = newlyAllocatedBufferBegin;
-		mBufferEnd = newlyAllocatedBufferBegin + currentElementCount;
+		mBufferEnd = newlyAllocatedBufferBegin + reAllocElementCount;
 		mBufferCapacityEnd = newlyAllocatedBufferBegin + reAllocElementCount;
 	}
 
@@ -141,7 +143,7 @@ namespace jinStl
 	void Array<ELEMENT_TYPE>::Expand()
 	{
 		const sizeType currentCapacity = Capacity();
-		ResizeGrow(currentCapacity == 0 ? (1) : (currentCapacity * 2));
+		CapacityResizeGrow(currentCapacity == 0 ? (1) : (currentCapacity * 2));
 	}
 
 	template <typename ELEMENT_TYPE>
@@ -166,7 +168,7 @@ namespace jinStl
 		const sizeType passedArrayElementSize = arr.Count();
 		if (passedArrayElementSize > 0)
 		{
-			mBufferBegin = reinterpret_cast<ELEMENT_TYPE*>(malloc(passedArrayElementSize * sizeof(ELEMENT_TYPE)));
+			mBufferBegin = reinterpret_cast<ELEMENT_TYPE*>(allocator::GetSetGlobalAllocator()->Allocate(passedArrayElementSize * sizeof(ELEMENT_TYPE)));
 			mBufferEnd = mBufferBegin + passedArrayElementSize;
 			mBufferCapacityEnd = mBufferEnd;
 
@@ -214,7 +216,7 @@ namespace jinStl
 		{
 			Destroy();
 
-			mBufferBegin = reinterpret_cast<ELEMENT_TYPE*>(malloc(passedArrayElementCount * sizeof(ELEMENT_TYPE)));
+			mBufferBegin = reinterpret_cast<ELEMENT_TYPE*>(allocator::GetSetGlobalAllocator()->Allocate(passedArrayElementCount * sizeof(ELEMENT_TYPE)));
 			mBufferEnd = mBufferBegin + passedArrayElementCount;
 			mBufferCapacityEnd = mBufferEnd;
 
@@ -246,7 +248,7 @@ namespace jinStl
 	{
 		if (reservationCount > Count())
 		{
-			ResizeGrow(reservationCount);
+			CapacityResizeGrow(reservationCount);
 		}
 	}
 
@@ -285,7 +287,7 @@ namespace jinStl
 			Expand();
 		}
 
-		new (mBufferEnd) ELEMENT_TYPE(move(args)...);
+		new (mBufferEnd) ELEMENT_TYPE(std::move(args)...);
 		++mBufferEnd;
 	}
 
@@ -310,14 +312,14 @@ namespace jinStl
 	template <typename ELEMENT_TYPE>
 	typename Array<ELEMENT_TYPE>::reference Array<ELEMENT_TYPE>::operator[](const sizeType index)
 	{
-		assert(Count() > index);
+		JINSTL_ASSERT(Count() > index);
 		return mBufferBegin[index];
 	}
 
 	template <typename ELEMENT_TYPE>
 	typename Array<ELEMENT_TYPE>::const_reference Array<ELEMENT_TYPE>::operator[](const sizeType index) const
 	{
-		assert(Count() > index);
+		JINSTL_ASSERT(Count() > index);
 		return mBufferBegin[index];
 	}
 
@@ -334,17 +336,23 @@ namespace jinStl
 	}
 
 	template <typename ELEMENT_TYPE>
-	void Array<ELEMENT_TYPE>::Resize(const sizeType targetCount)
+	void Array<ELEMENT_TYPE>::ResizeCount(const sizeType targetCount)
 	{
 		const sizeType curretCount = Count();
-		assert(curretCount != targetCount);
+		JINSTL_ASSERT(curretCount != targetCount);
 		if (targetCount > curretCount)
 		{
-			ResizeGrow(targetCount);
+			CapacityResizeGrow(targetCount);
+			for (sizeType elementIndex = curretCount; elementIndex < targetCount; elementIndex++)
+			{
+				mBufferEnd = mBufferCapacityEnd;
+				JINSTL_ASSERT(mBufferEnd == mBufferBegin + targetCount);
+				new (mBufferBegin + elementIndex) ELEMENT_TYPE();
+			}
 		}
 		else if (targetCount < curretCount)
 		{
-			ResizeShrink(targetCount);
+			CapacityResizeShrink(targetCount);
 		}
 	}
 
