@@ -6,7 +6,7 @@ namespace jinStl
 {
 	/// <summary>
 	/// This library is for reducing reallocation overhead of when capacity is full
-	///
+	/// 
 	/// </summary>
 	/// <typeparam name="ELEMENT_TYPE"></typeparam>
 	template <typename ELEMENT_TYPE>
@@ -16,13 +16,13 @@ namespace jinStl
 	public:
 
 		using sizeType = size_t;
-		using valueType = jinStl::Array<ELEMENT_TYPE>;
-		using reference = jinStl::Array<ELEMENT_TYPE>&;
-		using const_reference = const jinStl::Array<ELEMENT_TYPE>&;
-		using pointer = jinStl::Array<ELEMENT_TYPE>*;
-		using const_pointer = const jinStl::Array<ELEMENT_TYPE>*;
+		using valueType = ELEMENT_TYPE;
+		using reference = ELEMENT_TYPE&;
+		using const_reference = const ELEMENT_TYPE&;
+		using pointer = ELEMENT_TYPE*;
+		using const_pointer = const ELEMENT_TYPE*;
 
-		//inline static constexpr sizeType CapacityCountOfChunk;
+		//inline static const sizeType CapacityCountOfChunk;
 
 	private:
 
