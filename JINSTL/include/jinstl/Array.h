@@ -312,7 +312,7 @@ namespace jinStl
 			Expand();
 		}
 
-		new (mBufferEnd) ELEMENT_TYPE(std::move(args)...);
+		new (mBufferEnd) ELEMENT_TYPE(std::forward<ARGS>(args)...);
 		++mBufferEnd;
 	}
 
