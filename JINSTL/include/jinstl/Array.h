@@ -59,11 +59,16 @@ namespace jinStl
 		typename const_pointer RawPointer() const;
 		void ResizeCount(const sizeType targetCount);
 		void Clear();
+		void ClearNoDestructor();
+		void Remove(const sizeType index);
+		typename sizeType Find(const_reference cmpValue) const;
 
 		typename reference LastElement();
 		typename const_reference LastElement() const;
 		typename reference FirstElement();
 		typename const_reference FirstElement() const;
+
+		bool Contain(const_reference cmpValue) const;
 
 	};
 
@@ -394,6 +399,46 @@ namespace jinStl
 	}
 
 	template <typename ELEMENT_TYPE>
+	void Array<ELEMENT_TYPE>::ClearNoDestructor()
+	{
+		mBufferEnd = mBufferBegin;
+	}
+
+	template <typename ELEMENT_TYPE>
+	void Array<ELEMENT_TYPE>::Remove(const sizeType removedIndex)
+	{
+		JINSTL_ASSERT(Count() > removedIndex);
+
+		const size_t count = Count();
+
+		(mBufferBegin + removedIndex)->~ELEMENT_TYPE();
+
+		for(size_t index = removedIndex ; index < count ; ++index)
+		{
+			*(mBufferBegin + index) = std::move(*(mBufferBegin + index + 1));
+		}
+		--mBufferEnd;
+	}
+
+	template <typename ELEMENT_TYPE>
+	typename Array<ELEMENT_TYPE>::sizeType Array<ELEMENT_TYPE>::Find(const_reference cmpValue) const
+	{
+		Array<ELEMENT_TYPE>::sizeType targetIndex = Count();
+
+		const size_t count = Count();
+		for (size_t index = 0; index < count; ++index)
+		{
+			if (mBufferBegin[index] == cmpValue)
+			{
+				targetIndex = index;
+				break;
+			}
+		}
+
+		return targetIndex;
+	}
+
+	template <typename ELEMENT_TYPE>
 	typename Array<ELEMENT_TYPE>::reference Array<ELEMENT_TYPE>::LastElement()
 	{
 		JINSTL_ASSERT(Count() > 0);
@@ -419,6 +464,24 @@ namespace jinStl
 	{
 		JINSTL_ASSERT(Count() > 0);
 		return *mBufferBegin;
+	}
+
+	template <typename ELEMENT_TYPE>
+	bool Array<ELEMENT_TYPE>::Contain(const_reference cmpValue) const
+	{
+		bool isExist = false;
+
+		const size_t count = Count();
+		for(size_t index = 0 ; index < count ; ++index)
+		{
+			if(mBufferBegin[index] == cmpValue)
+			{
+				isExist = true;
+				break;
+			}
+		}
+
+		return isExist;
 	}
 }
 

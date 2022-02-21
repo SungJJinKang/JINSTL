@@ -217,6 +217,113 @@ TEST(ArrayTest, ClearAndCapacity)
 	EXPECT_EQ(testArray.Count(), 0);
 }
 
+TEST(ArrayTest, ClearNoDestructorAndCapacity)
+{
+	jinStl::Array<int> testArray{};
+	testArray.PushBack(1);
+	testArray.PushBack(2);
+	testArray.PushBack(3);
+	testArray.PushBack(4);
+	testArray.PushBack(5);
+	testArray.PushBack(6);
+	auto currentCapacity = testArray.Capacity();
+
+	testArray.ClearNoDestructor();
+
+	EXPECT_EQ(testArray.Capacity(), currentCapacity);
+	EXPECT_EQ(testArray.Count(), 0);
+}
+
+TEST(ArrayTest, Remove)
+{
+	jinStl::Array<int> testArray{};
+	testArray.PushBack(1);
+	testArray.PushBack(2);
+	testArray.PushBack(3);
+	testArray.PushBack(4);
+	testArray.PushBack(5);
+	testArray.PushBack(6);
+
+	auto currentCapacity = testArray.Capacity();
+	
+	EXPECT_EQ(testArray.Capacity(), currentCapacity);
+	EXPECT_EQ(testArray.Count(), 6);
+
+	testArray.Remove(1);
+	EXPECT_EQ(testArray[0], 1);
+	EXPECT_EQ(testArray[1], 3);
+	EXPECT_EQ(testArray[2], 4);
+	EXPECT_EQ(testArray[3], 5);
+	EXPECT_EQ(testArray[4], 6);
+	EXPECT_EQ(testArray.Capacity(), currentCapacity);
+	EXPECT_EQ(testArray.Count(), 5);
+
+	testArray.Remove(4);
+	EXPECT_EQ(testArray[0], 1);
+	EXPECT_EQ(testArray[1], 3);
+	EXPECT_EQ(testArray[2], 4);
+	EXPECT_EQ(testArray[3], 5);
+	EXPECT_EQ(testArray.Capacity(), currentCapacity);
+	EXPECT_EQ(testArray.Count(), 4);
+
+	testArray.Remove(0);
+	EXPECT_EQ(testArray[0], 3);
+	EXPECT_EQ(testArray[1], 4);
+	EXPECT_EQ(testArray[2], 5);
+	EXPECT_EQ(testArray.Capacity(), currentCapacity);
+	EXPECT_EQ(testArray.Count(), 3);
+
+	testArray.Remove(0);
+	EXPECT_EQ(testArray[0], 4);
+	EXPECT_EQ(testArray[1], 5);
+	EXPECT_EQ(testArray.Capacity(), currentCapacity);
+	EXPECT_EQ(testArray.Count(), 2);
+
+	testArray.Remove(1);
+	EXPECT_EQ(testArray[0], 4);
+	EXPECT_EQ(testArray.Capacity(), currentCapacity);
+	EXPECT_EQ(testArray.Count(), 1);
+
+	testArray.Remove(0);
+	EXPECT_EQ(testArray.Capacity(), currentCapacity);
+	EXPECT_EQ(testArray.Count(), 0);
+}
+
+TEST(ArrayTest, Contain)
+{
+	jinStl::Array<int> testArray{};
+	testArray.PushBack(1);
+	testArray.PushBack(2);
+	testArray.PushBack(3);
+	testArray.PushBack(4);
+	testArray.PushBack(5);
+	testArray.PushBack(6);
+
+	EXPECT_EQ(testArray.Contain(1), true);
+	EXPECT_EQ(testArray.Contain(6), true);
+	EXPECT_EQ(testArray.Contain(5), true);
+	EXPECT_EQ(testArray.Contain(51), false);
+	EXPECT_EQ(testArray.Contain(0), false);
+}
+
+TEST(ArrayTest, Find)
+{
+	jinStl::Array<int> testArray{};
+	testArray.PushBack(1);
+	testArray.PushBack(2);
+	testArray.PushBack(3);
+	testArray.PushBack(4);
+	testArray.PushBack(5);
+	testArray.PushBack(6);
+	testArray.EmplaceBack(7);
+
+	EXPECT_EQ(testArray.Find(1), 0);
+	EXPECT_EQ(testArray.Find(6), 5);
+	EXPECT_EQ(testArray.Find(5), 4);
+	EXPECT_EQ(testArray.Find(51), testArray.Count());
+	EXPECT_EQ(testArray.Find(0), testArray.Count());
+}
+
 TEST(ArrayTest, Resize1)
 {
 	jinStl::Array<int> testArray{};
