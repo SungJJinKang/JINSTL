@@ -44,10 +44,12 @@ namespace jinStl
 		Array& operator=(const Array& arr);
 		Array& operator=(Array&& arr) noexcept;
 		void Reserve(const sizeType size);
-		void Push_Back(const ELEMENT_TYPE& element);
-		void Push_Back(ELEMENT_TYPE&& element);
+		void PushBack(const ELEMENT_TYPE& element);
+		void PushBack(ELEMENT_TYPE&& element);
+		void PushBackUnInitialized();
+		void PopBack();
 		template<typename... ARGS>
-		void Emplace_Back(ARGS&&... args);
+		void EmplaceBack(ARGS&&... args);
 		bool Empty() const;
 		typename sizeType Count() const;
 		typename sizeType Capacity() const;
@@ -57,6 +59,11 @@ namespace jinStl
 		typename const_pointer RawPointer() const;
 		void ResizeCount(const sizeType targetCount);
 		void Clear();
+
+		typename reference LastElement();
+		typename const_reference LastElement() const;
+		typename reference FirstElement();
+		typename const_reference FirstElement() const;
 
 	};
 
@@ -252,7 +259,7 @@ namespace jinStl
 
 
 	template <typename ELEMENT_TYPE>
-	void Array<ELEMENT_TYPE>::Push_Back(const ELEMENT_TYPE& element)
+	void Array<ELEMENT_TYPE>::PushBack(const ELEMENT_TYPE& element)
 	{
 		if (Count() == Capacity())
 		{
@@ -264,7 +271,7 @@ namespace jinStl
 	}
 
 	template <typename ELEMENT_TYPE>
-	void Array<ELEMENT_TYPE>::Push_Back(ELEMENT_TYPE&& element)
+	void Array<ELEMENT_TYPE>::PushBack(ELEMENT_TYPE&& element)
 	{
 		if (Count() == Capacity())
 		{
@@ -276,8 +283,29 @@ namespace jinStl
 	}
 
 	template <typename ELEMENT_TYPE>
+	void Array<ELEMENT_TYPE>::PushBackUnInitialized()
+	{
+		if (Count() == Capacity())
+		{
+			Expand();
+		}
+
+		++mBufferEnd;
+	}
+
+	template <typename ELEMENT_TYPE>
+	void Array<ELEMENT_TYPE>::PopBack()
+	{
+		if(Count() > 0)
+		{
+			(mBufferEnd - 1)->~ELEMENT_TYPE();
+			--mBufferEnd;
+		}
+	}
+
+	template <typename ELEMENT_TYPE>
 	template <typename... ARGS>
-	void Array<ELEMENT_TYPE>::Emplace_Back(ARGS&&... args)
+	void Array<ELEMENT_TYPE>::EmplaceBack(ARGS&&... args)
 	{
 		if (Count() == Capacity())
 		{
@@ -363,6 +391,34 @@ namespace jinStl
 		}
 
 		mBufferEnd = mBufferBegin;
+	}
+
+	template <typename ELEMENT_TYPE>
+	typename Array<ELEMENT_TYPE>::reference Array<ELEMENT_TYPE>::LastElement()
+	{
+		JINSTL_ASSERT(Count() > 0);
+		return *(mBufferEnd - 1);
+	}
+
+	template <typename ELEMENT_TYPE>
+	typename Array<ELEMENT_TYPE>::const_reference Array<ELEMENT_TYPE>::LastElement() const
+	{
+		JINSTL_ASSERT(Count() > 0);
+		return *(mBufferEnd - 1);
+	}
+
+	template <typename ELEMENT_TYPE>
+	typename Array<ELEMENT_TYPE>::reference Array<ELEMENT_TYPE>::FirstElement()
+	{
+		JINSTL_ASSERT(Count() > 0);
+		return *mBufferBegin;
+	}
+
+	template <typename ELEMENT_TYPE>
+	typename Array<ELEMENT_TYPE>::const_reference Array<ELEMENT_TYPE>::FirstElement() const
+	{
+		JINSTL_ASSERT(Count() > 0);
+		return *mBufferBegin;
 	}
 }
 
