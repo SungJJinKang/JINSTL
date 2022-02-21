@@ -2,9 +2,15 @@
 
 Homemade STL library for studying, [DoomsEngine](https://github.com/SungJJinKang/DoomsEngine)       
 
-## Goal
+## Feature           
 
-- Make Homemade STL Library          
-- Write simple and readable code        
-- Global Allocator. ( Passing allocator as template argument isn't required, Global variable allocator is uesed )
-- Compatible with standard stl ( support std::iterator, std::algorithm... ) 
+### Simple and Readable Code.         
+
+### Compatible with STL         
+- Compatible with cpp stl iterator, algorithm.....           
+              
+### Global Allocator             
+- It's not need to pass allocator type as template argument.          
+- Global variable allocator is used ( You can use your allocator by setting it to global variable allocator. )              
+            
+### Array ( 80% ), ChunkArray, InplaceArray            
