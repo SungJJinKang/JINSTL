@@ -51,12 +51,12 @@ namespace dooms
 			template<typename... ARGS>
 			void Emplace_Back(ARGS&&... args);
 			bool Empty() const;
-			sizeType Count() const;
-			sizeType Capacity() const;
-			reference operator[](const sizeType index);
-			const_reference operator[](const sizeType index) const;
-			pointer RawPointer();
-			const_pointer RawPointer() const;
+			typename sizeType Count() const;
+			typename sizeType Capacity() const;
+			typename reference operator[](const sizeType index);
+			typename const_reference operator[](const sizeType index) const;
+			typename pointer RawPointer();
+			typename const_pointer RawPointer() const;
 			void Resize(const sizeType targetCount);
 			void Clear();
 			
@@ -96,7 +96,7 @@ namespace dooms
 
 			for (sizeType elementIndex = 0; elementIndex < currentElementCount; elementIndex++)
 			{
-				new (newlyAllocatedBufferBegin + elementIndex) ELEMENT_TYPE(move(mBufferBegin[elementIndex]));
+				new (newlyAllocatedBufferBegin + elementIndex) ELEMENT_TYPE(std::move(mBufferBegin[elementIndex]));
 			}
 
 			if(mBufferBegin != nullptr)
@@ -116,11 +116,11 @@ namespace dooms
 
 			ELEMENT_TYPE* const newlyAllocatedBufferBegin = nullptr;
 
+			const sizeType currentElementCount = Count();
+
 			if(reAllocElementCount > 0)
 			{
 				newlyAllocatedBufferBegin = reinterpret_cast<ELEMENT_TYPE*>(malloc(reAllocElementCount * sizeof(ELEMENT_TYPE)));
-
-				const sizeType currentElementCount = Count();
 
 				for (sizeType elementIndex = 0; elementIndex < reAllocElementCount; elementIndex++)
 				{
@@ -276,7 +276,7 @@ namespace dooms
 				Expand();
 			}
 
-			*mBufferEnd = move(element);
+			*mBufferEnd = std::move(element);
 			++mBufferEnd;
 		}
 
@@ -300,39 +300,39 @@ namespace dooms
 		}
 
 		template <typename ELEMENT_TYPE>
-		Array<ELEMENT_TYPE>::sizeType Array<ELEMENT_TYPE>::Count() const
+		typename Array<ELEMENT_TYPE>::sizeType Array<ELEMENT_TYPE>::Count() const
 		{
 			return mBufferEnd - mBufferBegin;
 		}
 
 		template <typename ELEMENT_TYPE>
-		Array<ELEMENT_TYPE>::sizeType Array<ELEMENT_TYPE>::Capacity() const
+		typename Array<ELEMENT_TYPE>::sizeType Array<ELEMENT_TYPE>::Capacity() const
 		{
 			return mBufferCapacityEnd - mBufferBegin;
 		}
 
 		template <typename ELEMENT_TYPE>
-		Array<ELEMENT_TYPE>::reference Array<ELEMENT_TYPE>::operator[](const sizeType index)
+		typename Array<ELEMENT_TYPE>::reference Array<ELEMENT_TYPE>::operator[](const sizeType index)
 		{
 			assert(Count() > index);
 			return mBufferBegin[index];
 		}
 
 		template <typename ELEMENT_TYPE>
-		Array<ELEMENT_TYPE>::const_reference Array<ELEMENT_TYPE>::operator[](const sizeType index) const
+		typename Array<ELEMENT_TYPE>::const_reference Array<ELEMENT_TYPE>::operator[](const sizeType index) const
 		{
 			assert(Count() > index);
 			return mBufferBegin[index];
 		}
 
 		template <typename ELEMENT_TYPE>
-		Array<ELEMENT_TYPE>::pointer Array<ELEMENT_TYPE>::RawPointer()
+		typename Array<ELEMENT_TYPE>::pointer Array<ELEMENT_TYPE>::RawPointer()
 		{
 			return mBufferBegin;
 		}
 
 		template <typename ELEMENT_TYPE>
-		Array<ELEMENT_TYPE>::const_pointer Array<ELEMENT_TYPE>::RawPointer() const
+		typename Array<ELEMENT_TYPE>::const_pointer Array<ELEMENT_TYPE>::RawPointer() const
 		{
 			return mBufferBegin;
 		}
