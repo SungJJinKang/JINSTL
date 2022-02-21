@@ -83,3 +83,52 @@ TEST(ArrayTest, Resize3)
 	EXPECT_EQ(testArray[2], 0);
 	EXPECT_EQ(testArray[3], 0);
 }
+
+
+TEST(ArrayTest, Resize4)
+{
+	jinStl::Array<int> testArray{};
+	testArray.Push_Back(1);
+	testArray.Push_Back(2);
+
+	testArray.ResizeCount(0);
+
+	EXPECT_EQ(testArray.Capacity(), 0);
+	EXPECT_EQ(testArray.Count(), 0);
+}
+
+TEST(ArrayTest, Reserve)
+{
+	jinStl::Array<int> testArray{};
+	testArray.Push_Back(1);
+	testArray.Push_Back(2);
+
+	testArray.Reserve(5);
+	
+	EXPECT_EQ(testArray.Capacity(), 5);
+	EXPECT_EQ(testArray.Count(), 2);
+}
+
+
+TEST(ArrayTest, RawPointer)
+{
+	jinStl::Array<int> testArray{};
+	testArray.Push_Back(1);
+	testArray.Push_Back(2);
+	
+	EXPECT_EQ(*testArray.RawPointer(), 1);
+	EXPECT_EQ(*(testArray.RawPointer() + 1), 2);
+}
+
+TEST(ArrayTest, Destory)
+{
+	jinStl::Array<int> testArray{};
+	testArray.Push_Back(1);
+	testArray.Push_Back(2);
+
+	testArray.~Array();
+
+	EXPECT_EQ(testArray.RawPointer(), nullptr);
+	EXPECT_EQ(testArray.Capacity(), 0);
+	EXPECT_EQ(testArray.Count(), 0);
+}

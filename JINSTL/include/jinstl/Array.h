@@ -148,11 +148,8 @@ namespace jinStl
 
 	template <typename ELEMENT_TYPE>
 	Array<ELEMENT_TYPE>::Array()
-		:
-		mBufferBegin{ nullptr },
-		mBufferEnd{ nullptr },
-		mBufferCapacityEnd{ nullptr }
 	{
+		NullifyBufferPtr();
 	}
 
 	template <typename ELEMENT_TYPE>
