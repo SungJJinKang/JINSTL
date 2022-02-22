@@ -4,11 +4,10 @@
 
 namespace jinstl
 {
-	/// <summary>
-	/// This library is for reducing reallocation overhead of when capacity is full
-	/// 
-	/// </summary>
-	/// <typeparam name="ELEMENT_TYPE"></typeparam>
+	/**
+	 * \brief Templated Dynamic Array is composed of dynamic array chunk. Chunk has max capacity. This is for reducing reallocation overhead when capacity is full.
+	 * \tparam ELEMENT_TYPE Element Type
+	 */
 	template <typename ELEMENT_TYPE>
 	class ChunkArray
 	{
