@@ -311,11 +311,9 @@ namespace jinstl
 	template <typename ELEMENT_TYPE>
 	void Array<ELEMENT_TYPE>::PopBack()
 	{
-		if(Count() > 0)
-		{
-			(mBufferEnd - 1)->~ELEMENT_TYPE();
-			--mBufferEnd;
-		}
+		JINSTL_ASSERT(Empty() == false);
+		(mBufferEnd - 1)->~ELEMENT_TYPE();
+		--mBufferEnd;
 	}
 
 	template <typename ELEMENT_TYPE>

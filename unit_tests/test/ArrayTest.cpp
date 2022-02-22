@@ -160,11 +160,6 @@ TEST(ArrayTest, PopBackAndCount)
 
 	EXPECT_EQ(testArray.Count(), 0);
 	EXPECT_EQ(testArray.Capacity(), originalCapacity);
-
-	testArray.PopBack();
-	testArray.PopBack();
-	testArray.PopBack();
-	testArray.PopBack();
 }
 
 TEST(ArrayTest, PopBackAndValue)
@@ -193,11 +188,6 @@ TEST(ArrayTest, PopBackAndValue)
 
 	EXPECT_EQ(testArray.Count(), 0);
 	EXPECT_EQ(testArray.Capacity(), originalCapacity);
-
-	testArray.PopBack();
-	testArray.PopBack();
-	testArray.PopBack();
-	testArray.PopBack();
 }
 
 TEST(ArrayTest, ClearAndCapacity)
