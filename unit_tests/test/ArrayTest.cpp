@@ -306,6 +306,24 @@ TEST(ArrayTest, Contain)
 	EXPECT_EQ(testArray.Contain(0), false);
 }
 
+TEST(ArrayTest, SwapPopBack)
+{
+	jinstl::Array<int> testArray{};
+	testArray.PushBack(1);
+	testArray.PushBack(2);
+	testArray.PushBack(3);
+	testArray.PushBack(4);
+	testArray.PushBack(5);
+	testArray.PushBack(6);
+
+	testArray.SwapPopBack(1);
+	EXPECT_EQ(testArray[1], 6);
+
+	testArray.SwapPopBack(0);
+	EXPECT_EQ(testArray[0], 5);
+	EXPECT_EQ(testArray.LastElement(), 4);
+}
+
 TEST(ArrayTest, Find)
 {
 	jinstl::Array<int> testArray{};

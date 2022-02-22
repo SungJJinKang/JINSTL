@@ -63,6 +63,7 @@ namespace jinstl
 		void Clear();
 		void ClearNoDestructor();
 		void Remove(const sizeType index);
+		void SwapPopBack(const sizeType removedIndex);
 		typename sizeType Find(const_reference cmpValue) const;
 
 		typename reference LastElement();
@@ -427,6 +428,22 @@ namespace jinstl
 			*(mBufferBegin + index) = std::move(*(mBufferBegin + index + 1));
 		}
 		--mBufferEnd;
+	}
+
+	template <typename ELEMENT_TYPE>
+	void Array<ELEMENT_TYPE>::SwapPopBack(const sizeType removedIndex)
+	{
+		JINSTL_ASSERT(Count() > removedIndex);
+
+		if(removedIndex == Count() - 1)
+		{
+			PopBack();
+		}
+		else
+		{
+			std::swap(LastElement(), mBufferBegin[removedIndex]);
+			PopBack();
+		}
 	}
 
 	template <typename ELEMENT_TYPE>
