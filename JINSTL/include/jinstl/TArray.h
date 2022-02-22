@@ -50,7 +50,7 @@ namespace jinstl
 		TArray(TArray&& arr) noexcept;
 		TArray& operator=(const TArray& arr);
 		TArray& operator=(TArray&& arr) noexcept;
-		void Reserve(const size_type size);
+		void ReserveCapacity(const size_type size);
 		void PushBack(const ELEMENT_TYPE& element);
 		void PushBack(ELEMENT_TYPE&& element);
 		void PushBackUnInitialized();
@@ -313,7 +313,7 @@ namespace jinstl
 	}
 
 	template <typename ELEMENT_TYPE>
-	void TArray<ELEMENT_TYPE>::Reserve(const size_type reservationCount)
+	void TArray<ELEMENT_TYPE>::ReserveCapacity(const size_type reservationCount)
 	{
 		if (reservationCount > Count())
 		{

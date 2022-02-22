@@ -601,7 +601,7 @@ TEST(ArrayTest, Reserve1)
 	testArray.PushBack(1);
 	testArray.PushBack(2);
 
-	testArray.Reserve(5);
+	testArray.ReserveCapacity(5);
 	
 	EXPECT_EQ(testArray.Capacity(), 5);
 	EXPECT_EQ(testArray.Count(), 2);
@@ -616,7 +616,7 @@ TEST(ArrayTest, Reserve2)
 	const size_t originalCapacity = testArray.Capacity();
 	const size_t originalCount = testArray.Count();
 
-	testArray.Reserve(0);
+	testArray.ReserveCapacity(0);
 
 	EXPECT_EQ(testArray.Capacity(), originalCapacity);
 	EXPECT_EQ(testArray.Count(), originalCount);
@@ -632,7 +632,7 @@ TEST(ArrayTest, Reserve3)
 	const size_t originalCapacity = testArray.Capacity();
 	const size_t originalCount = testArray.Count();
 
-	testArray.Reserve(originalCapacity);
+	testArray.ReserveCapacity(originalCapacity);
 
 	EXPECT_EQ(testArray.Capacity(), originalCapacity);
 	EXPECT_EQ(testArray.Count(), originalCount);
