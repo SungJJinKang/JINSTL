@@ -3,11 +3,11 @@
 
 #include <cstdlib>
 
-namespace jinStl
+namespace jinstl
 {
 	namespace allocator
 	{
-		class DefaultAllocator : public jinStl::allocator::Allocator
+		class DefaultAllocator : public jinstl::allocator::Allocator
 		{
 
 		protected:

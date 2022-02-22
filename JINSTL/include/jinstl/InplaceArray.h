@@ -5,7 +5,7 @@
 #include "AllocBase.h"
 #include "Allocator.h"
 
-namespace jinStl
+namespace jinstl
 {
 	template <typename ELEMENT_TYPE, size_t LOCAL_BUFFER_ELEMENT_COUNT>
 	class InplaceArray : public AllocBase

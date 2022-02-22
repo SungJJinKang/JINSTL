@@ -2,8 +2,8 @@
 
 #include "DefaultAllocator.h"
 
-jinStl::allocator::Allocator* jinStl::allocator::details::GlobalAllocator{ GlobalAllocator };
-jinStl::allocator::Allocator* jinStl::allocator::details::GetDefaultAllocator()
+jinstl::allocator::Allocator* jinstl::allocator::details::GlobalAllocator{ GlobalAllocator };
+jinstl::allocator::Allocator* jinstl::allocator::details::GetDefaultAllocator()
 {
 	static DefaultAllocator GlobalDefaultAllocator{};
 	return &GlobalDefaultAllocator;

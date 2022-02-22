@@ -2,7 +2,7 @@
 
 #include "Array.h"
 
-namespace jinStl
+namespace jinstl
 {
 	/// <summary>
 	/// This library is for reducing reallocation overhead of when capacity is full
@@ -26,7 +26,7 @@ namespace jinStl
 
 	private:
 
-		jinStl::Array<jinStl::Array<ELEMENT_TYPE>> mArrays;
+		jinstl::Array<jinstl::Array<ELEMENT_TYPE>> mArrays;
 
 	private:
 

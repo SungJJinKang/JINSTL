@@ -2,7 +2,7 @@
 
 #include "JINSTLCore.h"
 
-namespace jinStl
+namespace jinstl
 {
 	namespace allocator
 	{

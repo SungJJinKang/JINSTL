@@ -5,7 +5,7 @@
 #include "AllocBase.h"
 #include "Allocator.h"
 
-namespace jinStl
+namespace jinstl
 {
 	// TODO : support std iterator
 

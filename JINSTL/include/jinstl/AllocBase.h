@@ -2,7 +2,7 @@
 
 #include "Allocator.h"
 
-namespace jinStl
+namespace jinstl
 {
 	class AllocBase
 	{
