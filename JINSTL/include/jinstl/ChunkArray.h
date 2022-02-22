@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Array.h"
+#include "TArray.h"
 
 namespace jinstl
 {
@@ -25,7 +25,7 @@ namespace jinstl
 
 	private:
 
-		jinstl::Array<jinstl::Array<ELEMENT_TYPE>> mArrays;
+		jinstl::TArray<jinstl::TArray<ELEMENT_TYPE>> mArrays;
 
 	private:
 
@@ -60,7 +60,7 @@ namespace jinstl
 	template <typename ELEMENT_TYPE>
 	void ChunkArray<ELEMENT_TYPE>::Destroy()
 	{
-		mArrays.~Array();
+		mArrays.~TArray();
 	}
 
 	template <typename ELEMENT_TYPE>
