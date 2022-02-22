@@ -5,9 +5,6 @@ Homemade STL library for studying, [DoomsEngine](https://github.com/SungJJinKang
 ## Feature           
 
 ### Simple and Readable Code.         
-
-### Compatible with STL         
-- Compatible with cpp stl iterator, algorithm.....           
               
 ### Global Allocator             
 - It's not need to pass allocator type as template argument.          
