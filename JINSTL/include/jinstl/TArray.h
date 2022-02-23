@@ -474,6 +474,8 @@ namespace jinstl
 	template <typename ELEMENT_TYPE>
 	void TArray<ELEMENT_TYPE>::Insert(const size_type insertedIndex, const ELEMENT_TYPE& insertedValue)
 	{
+		JINSTL_ASSERT(insertedIndex <= Count());
+
 		const size_type currentElementCount = Count();
 		if (currentElementCount == Capacity())
 		{
@@ -491,6 +493,8 @@ namespace jinstl
 	template <typename ELEMENT_TYPE>
 	void TArray<ELEMENT_TYPE>::Insert(const size_type insertedIndex, ELEMENT_TYPE&& insertedValue)
 	{
+		JINSTL_ASSERT(insertedIndex <= Count());
+
 		if (Count() == Capacity())
 		{
 			CapacityResizeGrowForInsert(insertedIndex, 1);
@@ -507,6 +511,7 @@ namespace jinstl
 	template <typename ELEMENT_TYPE>
 	void TArray<ELEMENT_TYPE>::Insert(const size_type insertedIndex, const TArray& arr)
 	{
+		JINSTL_ASSERT(insertedIndex <= Count());
 		JINSTL_ASSERT(arr.Empty() == false);
 
 		const size_type copyedTArrayCount = arr.Count();
@@ -530,6 +535,7 @@ namespace jinstl
 	template <typename ELEMENT_TYPE>
 	void TArray<ELEMENT_TYPE>::Insert(const size_type insertedIndex, TArray&& arr)
 	{
+		JINSTL_ASSERT(insertedIndex <= Count());
 		JINSTL_ASSERT(arr.Empty() == false);
 
 		const size_type movedTArrayCount = arr.Count();
