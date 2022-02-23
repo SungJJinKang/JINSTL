@@ -51,19 +51,21 @@ namespace jinstl
 		TString& operator=(const_pointer_type cString);
 		void Reserve(const size_type size);
 		void Append(const_value_type element);
-		void Append(const TString& tstring);
+		void Append(const TString& tString);
+		void Append(TString&& tString) = delete;
 		void Append(const_pointer_type cString);
 		TString& operator+=(const_value_type element);
 		TString& operator+=(const TString& tstring);
+		TString& operator+=(TString&& tstring) = delete;
 		TString& operator+=(const_pointer_type cString);
 		void PopBack();
 		bool Empty() const;
-		typename size_type Length() const;
-		typename size_type Capacity() const;
-		typename reference_type operator[](const size_type index);
-		typename const_reference_type operator[](const size_type index) const;
-		typename pointer_type RawPointer();
-		typename const_pointer_type RawPointer() const;
+		inline typename size_type Length() const;
+		inline typename size_type Capacity() const;
+		inline typename reference_type operator[](const size_type index);
+		inline typename const_reference_type operator[](const size_type index) const;
+		inline typename pointer_type RawPointer();
+		inline typename const_pointer_type RawPointer() const;
 		typename pointer_type CString();
 		typename const_pointer_type CString() const;
 		void ResizeLength(const size_type targetCount);
@@ -405,39 +407,39 @@ namespace jinstl
 	}
 
 	template <typename CHAR_TYPE>
-	typename TString<CHAR_TYPE>::size_type TString<CHAR_TYPE>::Length() const
+	inline typename TString<CHAR_TYPE>::size_type TString<CHAR_TYPE>::Length() const
 	{
 		return mStringEnd - mStringBegin;
 	}
 
 	template <typename CHAR_TYPE>
-	typename TString<CHAR_TYPE>::size_type TString<CHAR_TYPE>::Capacity() const
+	inline typename TString<CHAR_TYPE>::size_type TString<CHAR_TYPE>::Capacity() const
 	{
 		return mStringCapacityEnd - mStringBegin;
 	}
 
 	template <typename CHAR_TYPE>
-	typename TString<CHAR_TYPE>::reference_type TString<CHAR_TYPE>::operator[](const size_type index)
+	inline typename TString<CHAR_TYPE>::reference_type TString<CHAR_TYPE>::operator[](const size_type index)
 	{
 		JINSTL_ASSERT(Length() > index);
 		return mStringBegin[index];
 	}
 
 	template <typename CHAR_TYPE>
-	typename TString<CHAR_TYPE>::const_reference_type TString<CHAR_TYPE>::operator[](const size_type index) const
+	inline typename TString<CHAR_TYPE>::const_reference_type TString<CHAR_TYPE>::operator[](const size_type index) const
 	{
 		JINSTL_ASSERT(Length() > index);
 		return mStringBegin[index];
 	}
 
 	template <typename CHAR_TYPE>
-	typename TString<CHAR_TYPE>::pointer_type TString<CHAR_TYPE>::RawPointer()
+	inline typename TString<CHAR_TYPE>::pointer_type TString<CHAR_TYPE>::RawPointer()
 	{
 		return mStringBegin;
 	}
 
 	template <typename CHAR_TYPE>
-	typename TString<CHAR_TYPE>::const_pointer_type TString<CHAR_TYPE>::RawPointer() const
+	inline typename TString<CHAR_TYPE>::const_pointer_type TString<CHAR_TYPE>::RawPointer() const
 	{
 		return mStringBegin;
 	}

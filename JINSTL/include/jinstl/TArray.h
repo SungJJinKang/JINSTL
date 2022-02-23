@@ -55,13 +55,13 @@ namespace jinstl
 		void PopBack();
 		template<typename... ARGS>
 		void EmplaceBack(ARGS&&... args);
-		bool Empty() const;
-		typename size_type Count() const;
-		typename size_type Capacity() const;
-		typename reference_type operator[](const size_type index);
-		typename const_reference_type operator[](const size_type index) const;
-		typename pointer_type RawPointer();
-		typename const_pointer_type RawPointer() const;
+		inline bool Empty() const;
+		inline typename size_type Count() const;
+		inline typename size_type Capacity() const;
+		inline typename reference_type operator[](const size_type index);
+		inline typename const_reference_type operator[](const size_type index) const;
+		inline typename pointer_type RawPointer();
+		inline typename const_pointer_type RawPointer() const;
 		void ResizeCount(const size_type targetCount);
 		void Clear();
 		void ClearNoDestructor();
@@ -73,10 +73,10 @@ namespace jinstl
 		void SwapPopBack(const size_type removedIndex);
 		typename size_type Find(const_reference_type cmpValue) const;
 
-		typename reference_type FirstElement();
-		typename const_reference_type FirstElement() const;
-		typename reference_type LastElement();
-		typename const_reference_type LastElement() const;
+		inline typename reference_type FirstElement();
+		inline typename const_reference_type FirstElement() const;
+		inline typename reference_type LastElement();
+		inline typename const_reference_type LastElement() const;
 
 		bool Contain(const_reference_type cmpValue) const;
 
@@ -378,45 +378,45 @@ namespace jinstl
 	}
 
 	template <typename ELEMENT_TYPE>
-	bool TArray<ELEMENT_TYPE>::Empty() const
+	inline bool TArray<ELEMENT_TYPE>::Empty() const
 	{
 		return (mBufferBegin == mBufferEnd);
 	}
 
 	template <typename ELEMENT_TYPE>
-	typename TArray<ELEMENT_TYPE>::size_type TArray<ELEMENT_TYPE>::Count() const
+	inline typename TArray<ELEMENT_TYPE>::size_type TArray<ELEMENT_TYPE>::Count() const
 	{
 		return mBufferEnd - mBufferBegin;
 	}
 
 	template <typename ELEMENT_TYPE>
-	typename TArray<ELEMENT_TYPE>::size_type TArray<ELEMENT_TYPE>::Capacity() const
+	inline typename TArray<ELEMENT_TYPE>::size_type TArray<ELEMENT_TYPE>::Capacity() const
 	{
 		return mBufferCapacityEnd - mBufferBegin;
 	}
 
 	template <typename ELEMENT_TYPE>
-	typename TArray<ELEMENT_TYPE>::reference_type TArray<ELEMENT_TYPE>::operator[](const size_type index)
+	inline typename TArray<ELEMENT_TYPE>::reference_type TArray<ELEMENT_TYPE>::operator[](const size_type index)
 	{
 		JINSTL_ASSERT(Count() > index);
 		return mBufferBegin[index];
 	}
 
 	template <typename ELEMENT_TYPE>
-	typename TArray<ELEMENT_TYPE>::const_reference_type TArray<ELEMENT_TYPE>::operator[](const size_type index) const
+	inline typename TArray<ELEMENT_TYPE>::const_reference_type TArray<ELEMENT_TYPE>::operator[](const size_type index) const
 	{
 		JINSTL_ASSERT(Count() > index);
 		return mBufferBegin[index];
 	}
 
 	template <typename ELEMENT_TYPE>
-	typename TArray<ELEMENT_TYPE>::pointer_type TArray<ELEMENT_TYPE>::RawPointer()
+	inline typename TArray<ELEMENT_TYPE>::pointer_type TArray<ELEMENT_TYPE>::RawPointer()
 	{
 		return mBufferBegin;
 	}
 
 	template <typename ELEMENT_TYPE>
-	typename TArray<ELEMENT_TYPE>::const_pointer_type TArray<ELEMENT_TYPE>::RawPointer() const
+	inline typename TArray<ELEMENT_TYPE>::const_pointer_type TArray<ELEMENT_TYPE>::RawPointer() const
 	{
 		return mBufferBegin;
 	}
@@ -575,28 +575,28 @@ namespace jinstl
 	}
 
 	template <typename ELEMENT_TYPE>
-	typename TArray<ELEMENT_TYPE>::reference_type TArray<ELEMENT_TYPE>::FirstElement()
+	inline typename TArray<ELEMENT_TYPE>::reference_type TArray<ELEMENT_TYPE>::FirstElement()
 	{
 		JINSTL_ASSERT(Count() > 0);
 		return *mBufferBegin;
 	}
 
 	template <typename ELEMENT_TYPE>
-	typename TArray<ELEMENT_TYPE>::const_reference_type TArray<ELEMENT_TYPE>::FirstElement() const
+	inline typename TArray<ELEMENT_TYPE>::const_reference_type TArray<ELEMENT_TYPE>::FirstElement() const
 	{
 		JINSTL_ASSERT(Count() > 0);
 		return *mBufferBegin;
 	}
 
 	template <typename ELEMENT_TYPE>
-	typename TArray<ELEMENT_TYPE>::reference_type TArray<ELEMENT_TYPE>::LastElement()
+	inline typename TArray<ELEMENT_TYPE>::reference_type TArray<ELEMENT_TYPE>::LastElement()
 	{
 		JINSTL_ASSERT(Count() > 0);
 		return *(mBufferEnd - 1);
 	}
 
 	template <typename ELEMENT_TYPE>
-	typename TArray<ELEMENT_TYPE>::const_reference_type TArray<ELEMENT_TYPE>::LastElement() const
+	inline typename TArray<ELEMENT_TYPE>::const_reference_type TArray<ELEMENT_TYPE>::LastElement() const
 	{
 		JINSTL_ASSERT(Count() > 0);
 		return *(mBufferEnd - 1);
