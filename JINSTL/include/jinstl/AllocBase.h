@@ -14,15 +14,25 @@ namespace jinstl
 
 		void* Allocate(const size_t size)
 		{
-			void* allocatedPtr = mAllocator->Allocate(size);
-			JINSTL_ASSERT(allocatedPtr != nullptr);
+			if(size != 0)
+			{
+				void* allocatedPtr = mAllocator->Allocate(size);
+				JINSTL_ASSERT(allocatedPtr != nullptr);
 
-			return allocatedPtr;
+				return allocatedPtr;
+			}
+			else
+			{
+				return nullptr;
+			}			
 		}
 
 		void DeAllocate(void* const ptr)
 		{
-			mAllocator->DeAllocate(reinterpret_cast<char*>(ptr));
+			if(ptr != nullptr)
+			{
+				mAllocator->DeAllocate(reinterpret_cast<char*>(ptr));
+			}			
 		}
 
 		allocator::Allocator* ChangeAllocator(allocator::Allocator* const newAllocator)
