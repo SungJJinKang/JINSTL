@@ -35,7 +35,6 @@ namespace jinstl
 		void CapacityResizeGrow(const size_type size);
 		void CapacityResizeGrowForInsert(const size_type insertedIndex, const size_type insertedElementCount);
 		void CapacityResizeShrink(const size_type size);
-
 		void Expand();
 
 	public:
@@ -83,9 +82,7 @@ namespace jinstl
 
 		bool Contain(const_value_type cmpCharacter) const;
 		int Compare(const TString<CHAR_TYPE>& string) const;
-		bool Equal(const TString<CHAR_TYPE>& string) const;
-		bool operator==(const TString<CHAR_TYPE>& string) const;
-		bool operator!=(const TString<CHAR_TYPE>& string) const;
+		bool EqualWith(const TString<CHAR_TYPE>& string) const;
 
 	};
 
@@ -98,6 +95,7 @@ namespace jinstl
 		mStringBegin = reinterpret_cast<CHAR_TYPE*>(Allocate(stringByteSize + sizeof(CHAR_TYPE) /* This protect reallocation when call CString */));
 		mStringEnd = reinterpret_cast<CHAR_TYPE*>(reinterpret_cast<char*>(mStringBegin) + stringByteSize);
 		mStringCapacityEnd = reinterpret_cast<CHAR_TYPE*>(reinterpret_cast<char*>(mStringBegin) + stringByteSize + sizeof(CHAR_TYPE));
+		std::memcpy(mStringBegin, cStringBegin, stringByteSize);
 	}
 
 	namespace details
@@ -354,8 +352,8 @@ namespace jinstl
 			CapacityResizeGrow(targetLength);
 		}
 
-		mStringEnd += passedStringLength;
 		std::memcpy(mStringEnd, tstring.mStringBegin, passedStringLength * sizeof(CHAR_TYPE));
+		mStringEnd += passedStringLength;
 	}
 
 	template <typename CHAR_TYPE>
@@ -368,8 +366,8 @@ namespace jinstl
 			CapacityResizeGrow(targetLength);
 		}
 
-		mStringEnd += cStringLength;
 		std::memcpy(mStringEnd, cString, cStringLength * sizeof(CHAR_TYPE));
+		mStringEnd += cStringLength;
 	}
 
 	template <typename CHAR_TYPE>
@@ -633,7 +631,7 @@ namespace jinstl
 	}
 
 	template <typename CHAR_TYPE>
-	bool TString<CHAR_TYPE>::Equal(const TString<CHAR_TYPE>& string) const
+	bool TString<CHAR_TYPE>::EqualWith(const TString<CHAR_TYPE>& string) const
 	{
 		if(Length() != string.Length())
 		{
@@ -650,15 +648,53 @@ namespace jinstl
 	}
 
 	template <typename CHAR_TYPE>
-	bool TString<CHAR_TYPE>::operator==(const TString<CHAR_TYPE>& string) const
+	extern TString<CHAR_TYPE> operator+(const TString<CHAR_TYPE>& lhs, const TString<CHAR_TYPE>& rhs)
 	{
-		return Equal(string);
+		TString<CHAR_TYPE> newString;
+
+		const size_t lhsLength = lhs.Length();
+		const size_t rhsLength = rhs.Length();
+
+		newString.ResizeLength(lhsLength + rhsLength/* This protect reallocation when call CString */);
+
+		std::memcpy(newString.RawPointer(), lhs.RawPointer(), lhsLength * sizeof(CHAR_TYPE));
+		std::memcpy(newString.RawPointer() + lhsLength, rhs.RawPointer(), rhsLength * sizeof(CHAR_TYPE));
+
+		return newString;
 	}
 
 	template <typename CHAR_TYPE>
-	bool TString<CHAR_TYPE>::operator!=(const TString<CHAR_TYPE>& string) const
+	extern bool operator==(const TString<CHAR_TYPE>& lhs, const TString<CHAR_TYPE>& rhs)
 	{
-		return !Equal(string);
+		if (lhs.Length() != rhs.Length())
+		{
+			return false;
+		}
+		else if (details::StringCompare(lhs.CString(), rhs.CString()) != 0)
+		{
+			return false;
+		}
+		else
+		{
+			return true;
+		}
+	}
+
+	template <typename CHAR_TYPE>
+	extern bool operator!=(const TString<CHAR_TYPE>& lhs, const TString<CHAR_TYPE>& rhs)
+	{
+		if (lhs.Length() != rhs.Length())
+		{
+			return true;
+		}
+		else if (details::StringCompare(lhs.CString(), rhs.CString()) != 0)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 
 	using String = TString<char>;
