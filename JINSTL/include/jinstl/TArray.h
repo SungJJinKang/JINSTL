@@ -425,7 +425,6 @@ namespace jinstl
 	void TArray<ELEMENT_TYPE>::ResizeCount(const size_type targetCount)
 	{
 		const size_type curretCount = Count();
-		JINSTL_ASSERT(curretCount != targetCount);
 		if (targetCount > curretCount)
 		{
 			CapacityResizeGrow(targetCount);

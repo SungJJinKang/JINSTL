@@ -472,7 +472,6 @@ namespace jinstl
 	void TString<CHAR_TYPE>::ResizeLength(const size_type targetCount)
 	{
 		const size_type curretCount = Length();
-		JINSTL_ASSERT(curretCount != targetCount);
 		if (targetCount > curretCount)
 		{
 			CapacityResizeGrow(targetCount);
