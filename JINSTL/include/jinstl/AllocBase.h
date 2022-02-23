@@ -46,6 +46,11 @@ namespace jinstl
 			return originalAllocator;
 		}
 
+		allocator::Allocator* GetAllocator() const
+		{
+			return mAllocator;
+		}
+
 	public:
 
 		AllocBase()
