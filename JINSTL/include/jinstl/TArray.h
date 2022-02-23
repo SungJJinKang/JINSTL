@@ -32,12 +32,11 @@ namespace jinstl
 	private:
 
 		void Destroy();
-		void NullifyBufferPtr();
+		inline void NullifyBufferPtr();
 		void CapacityResizeGrow(const size_type size);
 		void CapacityResizeGrowForInsert(const size_type insertedIndex, const size_type insertedElementCount);
 		void CapacityResizeShrink(const size_type size);
 		inline void MoveBackwardElements(const size_type targetIndex, const size_type movedElementCount);
-
 		void Expand();
 
 	public:
@@ -65,7 +64,7 @@ namespace jinstl
 		inline typename const_pointer_type RawPointer() const;
 		void ResizeCount(const size_type targetCount);
 		void Clear();
-		void ClearNoDestructor();
+		inline void ClearNoDestructor();
 		void Insert(const size_type insertedIndex, const ELEMENT_TYPE& insertedValue);
 		void Insert(const size_type insertedIndex, ELEMENT_TYPE&& insertedValue);
 		void Insert(const size_type insertedIndex, const TArray& arr);
@@ -99,7 +98,7 @@ namespace jinstl
 	}
 
 	template <typename ELEMENT_TYPE>
-	void TArray<ELEMENT_TYPE>::NullifyBufferPtr()
+	inline void TArray<ELEMENT_TYPE>::NullifyBufferPtr()
 	{
 		mBufferBegin = nullptr;
 		mBufferEnd = nullptr;
@@ -466,7 +465,7 @@ namespace jinstl
 	}
 
 	template <typename ELEMENT_TYPE>
-	void TArray<ELEMENT_TYPE>::ClearNoDestructor()
+	inline void TArray<ELEMENT_TYPE>::ClearNoDestructor()
 	{
 		mBufferEnd = mBufferBegin;
 	}
@@ -594,6 +593,8 @@ namespace jinstl
 	template <typename ELEMENT_TYPE>
 	typename TArray<ELEMENT_TYPE>::size_type TArray<ELEMENT_TYPE>::Find(const_reference_type cmpValue) const
 	{
+		// TODO : implement template specialization for element type applicable https://github.com/SungJJinKang/JINSTL
+		
 		TArray<ELEMENT_TYPE>::size_type targetIndex = Count();
 
 		const size_t count = Count();
@@ -640,6 +641,7 @@ namespace jinstl
 	template <typename ELEMENT_TYPE>
 	bool TArray<ELEMENT_TYPE>::Contain(const_reference_type cmpValue) const
 	{
+		// TODO : implement template specialization for element type applicable https://github.com/SungJJinKang/JINSTL
 		bool isExist = false;
 
 		const size_t count = Count();

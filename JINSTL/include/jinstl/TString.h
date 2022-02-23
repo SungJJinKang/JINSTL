@@ -30,8 +30,8 @@ namespace jinstl
 		
 		void RangeInitialize(const_pointer_type cStringBegin, const_pointer_type cStringEnd);
 		void RangeInitialize(const_pointer_type cString);
-		void Destroy();
-		void NullifyBufferPtr();
+		inline void Destroy();
+		inline void NullifyBufferPtr();
 		void CapacityResizeGrow(const size_type size);
 		void CapacityResizeGrowForInsert(const size_type insertedIndex, const size_type insertedElementCount);
 		void CapacityResizeShrink(const size_type size);
@@ -60,7 +60,7 @@ namespace jinstl
 		TString& operator+=(TString&& tstring) = delete;
 		TString& operator+=(const_pointer_type cString);
 		void PopBack();
-		bool Empty() const;
+		inline bool Empty() const;
 		inline typename size_type Length() const;
 		inline typename size_type Capacity() const;
 		inline typename reference_type operator[](const size_type index);
@@ -78,10 +78,10 @@ namespace jinstl
 		TString SubString(const size_type index) const;
 		typename size_type Find(const_reference_type cmpValue) const;
 
-		typename reference_type FirstCharacter();
-		typename const_reference_type FirstCharacter() const;
-		typename reference_type LastCharacter();
-		typename const_reference_type LastCharacter() const;
+		inline typename reference_type FirstCharacter();
+		inline typename const_reference_type FirstCharacter() const;
+		inline typename reference_type LastCharacter();
+		inline typename const_reference_type LastCharacter() const;
 
 		bool Contain(const_value_type cmpCharacter) const;
 		int Compare(const TString<CHAR_TYPE>& string) const;
@@ -131,7 +131,7 @@ namespace jinstl
 	}
 
 	template <typename CHAR_TYPE>
-	void TString<CHAR_TYPE>::Destroy()
+	inline void TString<CHAR_TYPE>::Destroy()
 	{
 		if (mStringBegin != nullptr)
 		{
@@ -140,7 +140,7 @@ namespace jinstl
 	}
 
 	template <typename CHAR_TYPE>
-	void TString<CHAR_TYPE>::NullifyBufferPtr()
+	inline void TString<CHAR_TYPE>::NullifyBufferPtr()
 	{
 		mStringBegin = nullptr;
 		mStringEnd = nullptr;
@@ -417,7 +417,7 @@ namespace jinstl
 	}
 	
 	template <typename CHAR_TYPE>
-	bool TString<CHAR_TYPE>::Empty() const
+	inline bool TString<CHAR_TYPE>::Empty() const
 	{
 		return (mStringBegin == mStringEnd);
 	}
@@ -582,6 +582,8 @@ namespace jinstl
 	template <typename CHAR_TYPE>
 	typename TString<CHAR_TYPE>::size_type TString<CHAR_TYPE>::Find(const_reference_type cmpValue) const
 	{
+		// TODO : implement template specialization for element type applicable https://github.com/SungJJinKang/JINSTL
+		
 		TString<CHAR_TYPE>::size_type targetIndex = Length();
 
 		const size_t count = Length();
@@ -598,28 +600,28 @@ namespace jinstl
 	}
 
 	template <typename CHAR_TYPE>
-	typename TString<CHAR_TYPE>::reference_type TString<CHAR_TYPE>::FirstCharacter()
+	inline typename TString<CHAR_TYPE>::reference_type TString<CHAR_TYPE>::FirstCharacter()
 	{
 		JINSTL_ASSERT(Length() > 0);
 		return *mStringBegin;
 	}
 
 	template <typename CHAR_TYPE>
-	typename TString<CHAR_TYPE>::const_reference_type TString<CHAR_TYPE>::FirstCharacter() const
+	inline typename TString<CHAR_TYPE>::const_reference_type TString<CHAR_TYPE>::FirstCharacter() const
 	{
 		JINSTL_ASSERT(Length() > 0);
 		return *mStringBegin;
 	}
 
 	template <typename CHAR_TYPE>
-	typename TString<CHAR_TYPE>::reference_type TString<CHAR_TYPE>::LastCharacter()
+	inline typename TString<CHAR_TYPE>::reference_type TString<CHAR_TYPE>::LastCharacter()
 	{
 		JINSTL_ASSERT(Length() > 0);
 		return *(mStringEnd - 1);
 	}
 
 	template <typename CHAR_TYPE>
-	typename TString<CHAR_TYPE>::const_reference_type TString<CHAR_TYPE>::LastCharacter() const
+	inline typename TString<CHAR_TYPE>::const_reference_type TString<CHAR_TYPE>::LastCharacter() const
 	{
 		JINSTL_ASSERT(Length() > 0);
 		return *(mStringEnd - 1);
@@ -628,6 +630,8 @@ namespace jinstl
 	template <typename CHAR_TYPE>
 	bool TString<CHAR_TYPE>::Contain(const_value_type cmpCharacter) const
 	{
+		// TODO : implement template specialization for element type applicable https://github.com/SungJJinKang/JINSTL
+
 		bool isExist = false;
 
 		const size_t count = Length();
