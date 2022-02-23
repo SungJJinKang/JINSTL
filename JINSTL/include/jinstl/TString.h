@@ -539,7 +539,7 @@ namespace jinstl
 			MoveBackwardCharacters(insertedIndex, cStringLength);
 		}
 
-		std::memcpy(mStringBegin + insertedIndex, cString, cStringLength);
+		std::memcpy(mStringBegin + insertedIndex, cString, cStringLength * sizeof(CHAR_TYPE));
 		mStringEnd += cStringLength;
 	}
 
@@ -559,7 +559,7 @@ namespace jinstl
 			MoveBackwardCharacters(insertedIndex, copyedTStringLength);
 		}
 
-		std::memcpy(mStringBegin + insertedIndex, string.mStringBegin, copyedTStringLength);
+		std::memcpy(mStringBegin + insertedIndex, string.mStringBegin, copyedTStringLength * sizeof(CHAR_TYPE));
 		mStringEnd += copyedTStringLength;
 	}
 
