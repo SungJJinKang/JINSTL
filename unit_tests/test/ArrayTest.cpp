@@ -59,7 +59,7 @@ TEST(ArrayTest, MoveConstruct)
 }
 
 
-TEST(ArrayTest, CopyAssignment)
+TEST(ArrayTest, CopyAssignment1)
 {
 	jinstl::TArray<int> testArray1{};
 	testArray1.PushBack(1);
@@ -94,7 +94,78 @@ TEST(ArrayTest, CopyAssignment)
 	EXPECT_EQ(testArray2[2], 3);
 }
 
-TEST(ArrayTest, MoveAssignment)
+TEST(ArrayTest, CopyAssignment2)
+{
+	jinstl::TArray<int> testArray1{};
+	testArray1.PushBack(1);
+	testArray1.PushBack(2);
+	testArray1.PushBack(3);
+
+	jinstl::TArray<int> testArray2{};
+	testArray2.PushBack(4);
+	testArray2.PushBack(5);
+	testArray2.PushBack(6);
+	testArray2.PushBack(7);
+	testArray2.PushBack(8);
+	testArray2.PushBack(9);
+
+	testArray2 = testArray1;
+	EXPECT_EQ(testArray1[0], 1);
+	EXPECT_EQ(testArray1[1], 2);
+	EXPECT_EQ(testArray1[2], 3);
+	EXPECT_EQ(testArray2[0], 1);
+	EXPECT_EQ(testArray2[1], 2);
+	EXPECT_EQ(testArray2[2], 3);
+	EXPECT_EQ(testArray1.Count(), testArray2.Count());
+
+	const size_t originalCount = testArray2.Count();
+	const size_t originalCapacity = testArray2.Capacity();
+
+	testArray1[0] = 10;
+	testArray1[1] = 1;
+	testArray1[2] = 3;
+	testArray1.~TArray();
+	EXPECT_EQ(testArray1.Count(), 0);
+	EXPECT_EQ(testArray1.Capacity(), 0);
+	EXPECT_EQ(testArray1.Empty(), true);
+	EXPECT_EQ(testArray2.Count(), originalCount);
+	EXPECT_EQ(testArray2.Capacity(), originalCapacity);
+	EXPECT_EQ(testArray2[0], 1);
+	EXPECT_EQ(testArray2[1], 2);
+	EXPECT_EQ(testArray2[2], 3);
+}
+
+TEST(ArrayTest, MoveAssignment1)
+{
+	jinstl::TArray<int> testArray1{};
+	testArray1.PushBack(1);
+	testArray1.PushBack(2);
+	testArray1.PushBack(3);
+
+	const size_t originalCapacity = testArray1.Capacity();
+	const size_t originalCount = testArray1.Count();
+
+	jinstl::TArray<int> testArray2{};
+	testArray2.PushBack(4);
+	testArray2.PushBack(5);
+	testArray2.PushBack(6);
+	testArray2.PushBack(7);
+	testArray2.PushBack(8);
+	testArray2.PushBack(9);
+
+	testArray2 = std::move(testArray1);
+	EXPECT_EQ(testArray1.Capacity(), 0);
+	EXPECT_EQ(testArray1.Count(), 0);
+	EXPECT_EQ(testArray1.Empty(), true);
+
+	EXPECT_EQ(testArray2[0], 1);
+	EXPECT_EQ(testArray2[1], 2);
+	EXPECT_EQ(testArray2[2], 3);
+	EXPECT_EQ(testArray2.Capacity(), originalCapacity);
+	EXPECT_EQ(testArray2.Count(), originalCount);
+}
+
+TEST(ArrayTest, MoveAssignment2)
 {
 	jinstl::TArray<int> testArray1{};
 	testArray1.PushBack(1);
