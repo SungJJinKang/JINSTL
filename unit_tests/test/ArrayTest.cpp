@@ -313,6 +313,64 @@ TEST(ArrayTest, Insert4)
 	EXPECT_EQ(testArray.Count(), 3);
 }
 
+TEST(ArrayTest, Insert5)
+{
+	jinstl::TArray<int> testArray{};
+	testArray.ReserveCapacity(100);
+
+	testArray.Insert(0, 5);
+
+	EXPECT_EQ(testArray[0], 5);
+	EXPECT_EQ(testArray.Count(), 1);
+}
+
+TEST(ArrayTest, Insert6)
+{
+	jinstl::TArray<int> testArray{};
+	testArray.ReserveCapacity(100);
+	testArray.PushBack(5);
+	testArray.PushBack(3);
+	EXPECT_EQ(testArray[0], 5);
+	EXPECT_EQ(testArray[1], 3);
+
+	testArray.Insert(0, 1);
+
+	EXPECT_EQ(testArray[0], 1);
+	EXPECT_EQ(testArray[1], 5);
+	EXPECT_EQ(testArray[2], 3);
+	EXPECT_EQ(testArray.Count(), 3);
+}
+
+TEST(ArrayTest, Insert7)
+{
+	jinstl::TArray<int> testArray{};
+	testArray.ReserveCapacity(100);
+	testArray.PushBack(5);
+	testArray.PushBack(3);
+
+	testArray.Insert(1, 1);
+
+	EXPECT_EQ(testArray[0], 5);
+	EXPECT_EQ(testArray[1], 1);
+	EXPECT_EQ(testArray[2], 3);
+	EXPECT_EQ(testArray.Count(), 3);
+}
+
+TEST(ArrayTest, Insert8)
+{
+	jinstl::TArray<int> testArray{};
+	testArray.ReserveCapacity(100);
+	testArray.PushBack(5);
+	testArray.PushBack(3);
+
+	testArray.Insert(2, 1);
+
+	EXPECT_EQ(testArray[0], 5);
+	EXPECT_EQ(testArray[1], 3);
+	EXPECT_EQ(testArray[2], 1);
+	EXPECT_EQ(testArray.Count(), 3);
+}
+
 TEST(ArrayTest, CopyInsertArray1)
 {
 	jinstl::TArray<int> testArray1{};
@@ -391,6 +449,88 @@ TEST(ArrayTest, CopyInsertArray3)
 	EXPECT_EQ(testArray1.Count(), 5);
 }
 
+
+TEST(ArrayTest, CopyInsertArray4)
+{
+	jinstl::TArray<int> testArray1{};
+	testArray1.ReserveCapacity(100);
+	testArray1.PushBack(5);
+	testArray1.PushBack(4);
+
+	jinstl::TArray<int> testArray2{};
+	testArray2.PushBack(1);
+	testArray2.PushBack(2);
+	testArray2.PushBack(3);
+
+	testArray1.Insert(0, testArray2);
+
+	EXPECT_EQ(testArray2[0], 1);
+	EXPECT_EQ(testArray2[1], 2);
+	EXPECT_EQ(testArray2[2], 3);
+	EXPECT_EQ(testArray2.Count(), 3);
+
+	EXPECT_EQ(testArray1[0], 1);
+	EXPECT_EQ(testArray1[1], 2);
+	EXPECT_EQ(testArray1[2], 3);
+	EXPECT_EQ(testArray1[3], 5);
+	EXPECT_EQ(testArray1[4], 4);
+	EXPECT_EQ(testArray1.Count(), 5);
+}
+
+TEST(ArrayTest, CopyInsertArray5)
+{
+	jinstl::TArray<int> testArray1{};
+	testArray1.ReserveCapacity(100);
+	testArray1.PushBack(5);
+	testArray1.PushBack(4);
+
+	jinstl::TArray<int> testArray2{};
+	testArray2.PushBack(1);
+	testArray2.PushBack(2);
+	testArray2.PushBack(3);
+
+	testArray1.Insert(1, testArray2);
+
+	EXPECT_EQ(testArray2[0], 1);
+	EXPECT_EQ(testArray2[1], 2);
+	EXPECT_EQ(testArray2[2], 3);
+	EXPECT_EQ(testArray2.Count(), 3);
+
+	EXPECT_EQ(testArray1[0], 5);
+	EXPECT_EQ(testArray1[1], 1);
+	EXPECT_EQ(testArray1[2], 2);
+	EXPECT_EQ(testArray1[3], 3);
+	EXPECT_EQ(testArray1[4], 4);
+	EXPECT_EQ(testArray1.Count(), 5);
+}
+
+TEST(ArrayTest, CopyInsertArray6)
+{
+	jinstl::TArray<int> testArray1{};
+	testArray1.ReserveCapacity(100);
+	testArray1.PushBack(5);
+	testArray1.PushBack(4);
+
+	jinstl::TArray<int> testArray2{};
+	testArray2.PushBack(1);
+	testArray2.PushBack(2);
+	testArray2.PushBack(3);
+
+	testArray1.Insert(2, testArray2);
+
+	EXPECT_EQ(testArray2[0], 1);
+	EXPECT_EQ(testArray2[1], 2);
+	EXPECT_EQ(testArray2[2], 3);
+	EXPECT_EQ(testArray2.Count(), 3);
+
+	EXPECT_EQ(testArray1[0], 5);
+	EXPECT_EQ(testArray1[1], 4);
+	EXPECT_EQ(testArray1[2], 1);
+	EXPECT_EQ(testArray1[3], 2);
+	EXPECT_EQ(testArray1[4], 3);
+	EXPECT_EQ(testArray1.Count(), 5);
+}
+
 TEST(ArrayTest, MoveInsertArray1)
 {
 	jinstl::TArray<int> testArray1{};
@@ -445,6 +585,84 @@ TEST(ArrayTest, MoveInsertArray2)
 TEST(ArrayTest, MoveInsertArray3)
 {
 	jinstl::TArray<int> testArray1{};
+	testArray1.PushBack(5);
+	testArray1.PushBack(4);
+
+	jinstl::TArray<int> testArray2{};
+	testArray2.PushBack(1);
+	testArray2.PushBack(2);
+	testArray2.PushBack(3);
+
+	testArray1.Insert(2, std::move(testArray2));
+
+	EXPECT_EQ(testArray2.Count(), 0);
+	EXPECT_EQ(testArray2.Capacity(), 0);
+
+	EXPECT_EQ(testArray1[0], 5);
+	EXPECT_EQ(testArray1[1], 4);
+	EXPECT_EQ(testArray1[2], 1);
+	EXPECT_EQ(testArray1[3], 2);
+	EXPECT_EQ(testArray1[4], 3);
+	EXPECT_EQ(testArray1.Count(), 5);
+}
+
+TEST(ArrayTest, MoveInsertArray4)
+{
+	jinstl::TArray<int> testArray1{};
+	testArray1.ReserveCapacity(100);
+	testArray1.PushBack(5);
+	testArray1.PushBack(4);
+
+	jinstl::TArray<int> testArray2{};
+	testArray2.PushBack(1);
+	testArray2.PushBack(2);
+	testArray2.PushBack(3);
+	EXPECT_EQ(testArray2[0], 1);
+	EXPECT_EQ(testArray2[1], 2);
+	EXPECT_EQ(testArray2[2], 3);
+
+	testArray1.Insert(0, std::move(testArray2));
+
+	EXPECT_EQ(testArray2.Count(), 0);
+	EXPECT_EQ(testArray2.Capacity(), 0);
+
+	EXPECT_EQ(testArray1[0], 1);
+	EXPECT_EQ(testArray1[1], 2);
+	EXPECT_EQ(testArray1[2], 3);
+	EXPECT_EQ(testArray1[3], 5);
+	EXPECT_EQ(testArray1[4], 4);
+	EXPECT_EQ(testArray1.Count(), 5);
+}
+
+TEST(ArrayTest, MoveInsertArray5)
+{
+	jinstl::TArray<int> testArray1{};
+	testArray1.ReserveCapacity(100);
+	testArray1.PushBack(5);
+	testArray1.PushBack(4);
+
+	jinstl::TArray<int> testArray2{};
+	testArray2.PushBack(1);
+	testArray2.PushBack(2);
+	testArray2.PushBack(3);
+
+	testArray1.Insert(1, std::move(testArray2));
+
+	EXPECT_EQ(testArray2.Count(), 0);
+	EXPECT_EQ(testArray2.Capacity(), 0);
+
+	EXPECT_EQ(testArray1[0], 5);
+	EXPECT_EQ(testArray1[1], 1);
+	EXPECT_EQ(testArray1[2], 2);
+	EXPECT_EQ(testArray1[3], 3);
+	EXPECT_EQ(testArray1[4], 4);
+	EXPECT_EQ(testArray1.Count(), 5);
+}
+
+TEST(ArrayTest, MoveInsertArray6)
+{
+	jinstl::TArray<int> testArray1{};
+	testArray1.ReserveCapacity(100);
 	testArray1.PushBack(5);
 	testArray1.PushBack(4);
 

@@ -207,7 +207,7 @@ namespace jinstl
 	inline void TArray<ELEMENT_TYPE>::MoveBackwardElements(const size_type targetIndex, const size_type movedElementCount)
 	{
 		const size_type currentElementCount = Count();
-		for (size_type elementIndex = targetIndex + movedElementCount; elementIndex < movedElementCount + currentElementCount; elementIndex++)
+		for (size_type elementIndex = movedElementCount + currentElementCount - 1 ; elementIndex >= targetIndex + movedElementCount; elementIndex--)
 		{
 			// Move elementes after insertedIndex
 			new (mBufferBegin + elementIndex) ELEMENT_TYPE(std::move(mBufferBegin[elementIndex - movedElementCount]));
