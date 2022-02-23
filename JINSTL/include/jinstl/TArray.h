@@ -36,6 +36,7 @@ namespace jinstl
 		void CapacityResizeGrow(const size_type size);
 		void CapacityResizeGrowForInsert(const size_type insertedIndex, const size_type insertedElementCount);
 		void CapacityResizeShrink(const size_type size);
+		inline void MoveBackwardElements(const size_type targetIndex, const size_type movedElementCount);
 
 		void Expand();
 
@@ -200,6 +201,17 @@ namespace jinstl
 		mBufferBegin = newlyAllocatedBufferBegin;
 		mBufferEnd = newlyAllocatedBufferBegin + reAllocElementCount;
 		mBufferCapacityEnd = newlyAllocatedBufferBegin + reAllocElementCount;
+	}
+
+	template <typename ELEMENT_TYPE>
+	inline void TArray<ELEMENT_TYPE>::MoveBackwardElements(const size_type targetIndex, const size_type movedElementCount)
+	{
+		const size_type currentElementCount = Count();
+		for (size_type elementIndex = targetIndex + movedElementCount; elementIndex < movedElementCount + currentElementCount; elementIndex++)
+		{
+			// Move elementes after insertedIndex
+			new (mBufferBegin + elementIndex) ELEMENT_TYPE(std::move(mBufferBegin[elementIndex - movedElementCount]));
+		}
 	}
 
 	template <typename ELEMENT_TYPE>
@@ -462,11 +474,16 @@ namespace jinstl
 	template <typename ELEMENT_TYPE>
 	void TArray<ELEMENT_TYPE>::Insert(const size_type insertedIndex, const ELEMENT_TYPE& insertedValue)
 	{
-		if (Count() == Capacity())
+		const size_type currentElementCount = Count();
+		if (currentElementCount == Capacity())
 		{
 			CapacityResizeGrowForInsert(insertedIndex, 1);
 		}
-		
+		else
+		{
+			MoveBackwardElements(insertedIndex, 1);
+		}
+
 		mBufferBegin[insertedIndex] = insertedValue;
 		++mBufferEnd;
 	}
@@ -477,6 +494,10 @@ namespace jinstl
 		if (Count() == Capacity())
 		{
 			CapacityResizeGrowForInsert(insertedIndex, 1);
+		}
+		else
+		{
+			MoveBackwardElements(insertedIndex, 1);
 		}
 
 		mBufferBegin[insertedIndex] = std::move(insertedValue);
@@ -492,6 +513,10 @@ namespace jinstl
 		if (Count() + copyedTArrayCount > Capacity())
 		{
 			CapacityResizeGrowForInsert(insertedIndex, copyedTArrayCount);
+		}
+		else
+		{
+			MoveBackwardElements(insertedIndex, copyedTArrayCount);
 		}
 
 		for (size_type elementIndex = 0; elementIndex < copyedTArrayCount; elementIndex++)
@@ -511,6 +536,10 @@ namespace jinstl
 		if (Count() + movedTArrayCount > Capacity())
 		{
 			CapacityResizeGrowForInsert(insertedIndex, movedTArrayCount);
+		}
+		else
+		{
+			MoveBackwardElements(insertedIndex, movedTArrayCount);
 		}
 
 		for (size_type elementIndex = 0; elementIndex < movedTArrayCount; elementIndex++)
