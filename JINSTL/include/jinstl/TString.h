@@ -43,6 +43,7 @@ namespace jinstl
 		TString();
 		TString(allocator::Allocator* const allocator);
 		TString(const_pointer_type cString);
+		TString(const_pointer_type cStringBegin, const_pointer_type cStringEnd);
 		~TString();
 		TString(const TString& arr);
 		TString(TString&& arr) noexcept;
@@ -51,8 +52,11 @@ namespace jinstl
 		TString& operator=(const_pointer_type cString);
 		void Reserve(const size_type size);
 		void Append(const_value_type element);
-		void Append(const TString& arr);
+		void Append(const TString& tstring);
 		void Append(const_pointer_type cString);
+		TString& operator+=(const_value_type element);
+		TString& operator+=(const TString& tstring);
+		TString& operator+=(const_pointer_type cString);
 		void PopBack();
 		bool Empty() const;
 		typename size_type Length() const;
@@ -69,6 +73,7 @@ namespace jinstl
 		void Insert(const size_type insertedIndex, const_pointer_type cString);
 		void Insert(const size_type insertedIndex, const TString& string);
 		void Remove(const size_type index);
+		TString SubString(const size_type index) const;
 		typename size_type Find(const_reference_type cmpValue) const;
 
 		typename reference_type FirstCharacter();
@@ -80,6 +85,7 @@ namespace jinstl
 		int Compare(const TString<CHAR_TYPE>& string) const;
 		bool Equal(const TString<CHAR_TYPE>& string) const;
 		bool operator==(const TString<CHAR_TYPE>& string) const;
+		bool operator!=(const TString<CHAR_TYPE>& string) const;
 
 	};
 
@@ -231,6 +237,13 @@ namespace jinstl
 	}
 
 	template <typename CHAR_TYPE>
+	TString<CHAR_TYPE>::TString(const_pointer_type cStringBegin, const_pointer_type cStringEnd)
+	{
+		JINSTL_ASSERT(cStringBegin < cStringEnd);
+		RangeInitialize(cStringBegin, cStringEnd);
+	}
+
+	template <typename CHAR_TYPE>
 	TString<CHAR_TYPE>::~TString()
 	{
 		Destroy();
@@ -332,9 +345,9 @@ namespace jinstl
 	}
 
 	template <typename CHAR_TYPE>
-	void TString<CHAR_TYPE>::Append(const TString& arr)
+	void TString<CHAR_TYPE>::Append(const TString& tstring)
 	{
-		const size_type passedStringLength = arr.Length();
+		const size_type passedStringLength = tstring.Length();
 		const size_type targetLength = Length() + passedStringLength;
 		if (targetLength > Capacity())
 		{
@@ -342,7 +355,7 @@ namespace jinstl
 		}
 
 		mStringEnd += passedStringLength;
-		std::memcpy(mStringEnd, arr.mStringBegin, passedStringLength * sizeof(CHAR_TYPE));
+		std::memcpy(mStringEnd, tstring.mStringBegin, passedStringLength * sizeof(CHAR_TYPE));
 	}
 
 	template <typename CHAR_TYPE>
@@ -357,6 +370,27 @@ namespace jinstl
 
 		mStringEnd += cStringLength;
 		std::memcpy(mStringEnd, cString, cStringLength * sizeof(CHAR_TYPE));
+	}
+
+	template <typename CHAR_TYPE>
+	TString<CHAR_TYPE>& TString<CHAR_TYPE>::operator+=(const_value_type element)
+	{
+		Append(element);
+		return *this;
+	}
+
+	template <typename CHAR_TYPE>
+	TString<CHAR_TYPE>& TString<CHAR_TYPE>::operator+=(const TString& tstring)
+	{
+		Append(tstring);
+		return *this;
+	}
+
+	template <typename CHAR_TYPE>
+	TString<CHAR_TYPE>& TString<CHAR_TYPE>::operator+=(const_pointer_type cString)
+	{
+		Append(cString);
+		return *this;
 	}
 
 	template <typename CHAR_TYPE>
@@ -507,7 +541,14 @@ namespace jinstl
 		std::memcpy(mStringBegin + removedIndex, mStringBegin + removedIndex + 1, sizeof(CHAR_TYPE) * (Length() - removedIndex));
 		--mStringEnd;
 	}
-	
+
+	template <typename CHAR_TYPE>
+	TString<CHAR_TYPE> TString<CHAR_TYPE>::SubString(const size_type index) const
+	{
+		JINSTL_ASSERT(index < Length());
+		return TString<CHAR_TYPE>{mStringBegin + index, mStringEnd};
+	}
+
 	template <typename CHAR_TYPE>
 	typename TString<CHAR_TYPE>::size_type TString<CHAR_TYPE>::Find(const_reference_type cmpValue) const
 	{
@@ -611,18 +652,13 @@ namespace jinstl
 	template <typename CHAR_TYPE>
 	bool TString<CHAR_TYPE>::operator==(const TString<CHAR_TYPE>& string) const
 	{
-		if (Length() != string.Length())
-		{
-			return false;
-		}
-		else if (details::StringCompare(CString(), string.CString()) != 0)
-		{
-			return false;
-		}
-		else
-		{
-			return true;
-		}
+		return Equal(string);
+	}
+
+	template <typename CHAR_TYPE>
+	bool TString<CHAR_TYPE>::operator!=(const TString<CHAR_TYPE>& string) const
+	{
+		return !Equal(string);
 	}
 
 	using String = TString<char>;
