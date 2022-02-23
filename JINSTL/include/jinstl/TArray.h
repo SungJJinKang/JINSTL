@@ -7,8 +7,6 @@
 
 namespace jinstl
 {
-	// TODO : support std iterator
-
 	/**
 	 * \brief Templated Dynamic Array. 
 	 * \tparam ELEMENT_TYPE Element Type
