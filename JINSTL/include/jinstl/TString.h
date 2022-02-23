@@ -35,6 +35,7 @@ namespace jinstl
 		void CapacityResizeGrow(const size_type size);
 		void CapacityResizeGrowForInsert(const size_type insertedIndex, const size_type insertedElementCount);
 		void CapacityResizeShrink(const size_type size);
+		inline void MoveBackwardCharacters(const size_type targetIndex, const size_type movedCharacterCount);
 		void Expand();
 
 	public:
@@ -91,13 +92,22 @@ namespace jinstl
 	template <typename CHAR_TYPE>
 	void TString<CHAR_TYPE>::RangeInitialize(const_pointer_type cStringBegin, const_pointer_type cStringEnd)
 	{
-		JINSTL_ASSERT(cStringEnd > cStringBegin);
+		JINSTL_ASSERT(cStringEnd >= cStringBegin);
 
-		const size_type stringByteSize = reinterpret_cast<const char*>(cStringEnd) - reinterpret_cast<const char*>(cStringBegin);
-		mStringBegin = reinterpret_cast<CHAR_TYPE*>(Allocate(stringByteSize + sizeof(CHAR_TYPE) /* This protect reallocation when call CString */));
-		mStringEnd = reinterpret_cast<CHAR_TYPE*>(reinterpret_cast<char*>(mStringBegin) + stringByteSize);
-		mStringCapacityEnd = reinterpret_cast<CHAR_TYPE*>(reinterpret_cast<char*>(mStringBegin) + stringByteSize + sizeof(CHAR_TYPE));
-		std::memcpy(mStringBegin, cStringBegin, stringByteSize);
+		if(cStringEnd > cStringBegin)
+		{
+			const size_type stringByteSize = reinterpret_cast<const char*>(cStringEnd) - reinterpret_cast<const char*>(cStringBegin);
+			mStringBegin = reinterpret_cast<CHAR_TYPE*>(Allocate(stringByteSize + sizeof(CHAR_TYPE) /* This protect reallocation when call CString */));
+			mStringEnd = reinterpret_cast<CHAR_TYPE*>(reinterpret_cast<char*>(mStringBegin) + stringByteSize);
+			mStringCapacityEnd = reinterpret_cast<CHAR_TYPE*>(reinterpret_cast<char*>(mStringBegin) + stringByteSize + sizeof(CHAR_TYPE));
+			std::memcpy(mStringBegin, cStringBegin, stringByteSize);
+		}
+		else
+		{
+			NullifyBufferPtr();
+		}
+
+	
 	}
 
 	namespace details
@@ -117,7 +127,6 @@ namespace jinstl
 	void TString<CHAR_TYPE>::RangeInitialize(const_pointer_type cString)
 	{
 		const size_type cStringLength = details::CStringLength(cString);
-		JINSTL_ASSERT(cStringLength > 0);
 		RangeInitialize(cString, cString + cStringLength);
 	}
 
@@ -169,9 +178,9 @@ namespace jinstl
 		}
 		else
 		{
-			const size_t targetCapacity = Length() + insertedElementCount + 1 /* */;
-
 			const size_type currentStringLength = Length();
+			const size_t targetCapacity = currentStringLength + insertedElementCount;
+
 			CHAR_TYPE* const newlyAllocatedStringBegin = reinterpret_cast<CHAR_TYPE*>(Allocate(targetCapacity * sizeof(CHAR_TYPE)));
 			
 			std::memcpy(newlyAllocatedStringBegin, mStringBegin, insertedIndex * sizeof(CHAR_TYPE));
@@ -211,6 +220,13 @@ namespace jinstl
 	}
 
 	template <typename CHAR_TYPE>
+	inline void TString<CHAR_TYPE>::MoveBackwardCharacters(const size_type targetIndex, const size_type movedCharacterCount)
+	{
+		const size_type currentLenth = Length();
+		std::memmove(mStringBegin + targetIndex + movedCharacterCount, mStringBegin + targetIndex, (currentLenth - targetIndex) * sizeof(CHAR_TYPE));
+	}
+
+	template <typename CHAR_TYPE>
 	void TString<CHAR_TYPE>::Expand()
 	{
 		const size_type currentCapacity = Capacity();
@@ -239,7 +255,7 @@ namespace jinstl
 	template <typename CHAR_TYPE>
 	TString<CHAR_TYPE>::TString(const_pointer_type cStringBegin, const_pointer_type cStringEnd)
 	{
-		JINSTL_ASSERT(cStringBegin < cStringEnd);
+		JINSTL_ASSERT(cStringBegin <= cStringEnd);
 		RangeInitialize(cStringBegin, cStringEnd);
 	}
 
@@ -345,16 +361,16 @@ namespace jinstl
 	}
 
 	template <typename CHAR_TYPE>
-	void TString<CHAR_TYPE>::Append(const TString& tstring)
+	void TString<CHAR_TYPE>::Append(const TString& tString)
 	{
-		const size_type passedStringLength = tstring.Length();
+		const size_type passedStringLength = tString.Length();
 		const size_type targetLength = Length() + passedStringLength;
 		if (targetLength > Capacity())
 		{
 			CapacityResizeGrow(targetLength);
 		}
 
-		std::memcpy(mStringEnd, tstring.mStringBegin, passedStringLength * sizeof(CHAR_TYPE));
+		std::memcpy(mStringEnd, tString.mStringBegin, passedStringLength * sizeof(CHAR_TYPE));
 		mStringEnd += passedStringLength;
 	}
 
@@ -495,9 +511,14 @@ namespace jinstl
 	template <typename CHAR_TYPE>
 	void TString<CHAR_TYPE>::Insert(const size_type insertedIndex, CHAR_TYPE insertedCharacter)
 	{
+		JINSTL_ASSERT(insertedIndex <= Length());
 		if (Length() == Capacity())
 		{
 			CapacityResizeGrowForInsert(insertedIndex, 1);
+		}
+		else
+		{
+			MoveBackwardCharacters(insertedIndex, 1);
 		}
 
 		mStringBegin[insertedIndex] = insertedCharacter;
@@ -507,10 +528,15 @@ namespace jinstl
 	template <typename CHAR_TYPE>
 	void TString<CHAR_TYPE>::Insert(const size_type insertedIndex, const_pointer_type cString)
 	{
+		JINSTL_ASSERT(insertedIndex <= Length());
 		const size_type cStringLength = details::CStringLength(cString);
 		if (Length() + cStringLength > Capacity())
 		{
 			CapacityResizeGrowForInsert(insertedIndex, cStringLength);
+		}
+		else
+		{
+			MoveBackwardCharacters(insertedIndex, cStringLength);
 		}
 
 		std::memcpy(mStringBegin + insertedIndex, cString, cStringLength);
@@ -520,12 +546,17 @@ namespace jinstl
 	template <typename CHAR_TYPE>
 	void TString<CHAR_TYPE>::Insert(const size_type insertedIndex, const TString& string)
 	{
+		JINSTL_ASSERT(insertedIndex <= Length());
 		JINSTL_ASSERT(string.Empty() == false);
 
 		const size_type copyedTStringLength = string.Length();
 		if (Length() + copyedTStringLength > Capacity())
 		{
 			CapacityResizeGrowForInsert(insertedIndex, copyedTStringLength);
+		}
+		else
+		{
+			MoveBackwardCharacters(insertedIndex, copyedTStringLength);
 		}
 
 		std::memcpy(mStringBegin + insertedIndex, string.mStringBegin, copyedTStringLength);
@@ -614,31 +645,33 @@ namespace jinstl
 
 	namespace details
 	{
-		inline int StringCompare(const char* const lhs, const char* const rhs)
+		inline int StringCompare(const char* const lhs, const char* const rhs, const size_t maxStrLength)
 		{
-			return std::strcmp(lhs, rhs);
+			return std::strncmp(lhs, rhs, maxStrLength);
 		}
 
-		inline int StringCompare(const wchar_t* const lhs, const wchar_t* const rhs)
+		inline int StringCompare(const wchar_t* const lhs, const wchar_t* const rhs, const size_t maxStrLength)
 		{
-			return std::wcscmp(lhs, rhs);
+			return std::wcsncmp(lhs, rhs, maxStrLength);
 		}
 	}
 
 	template <typename CHAR_TYPE>
 	int TString<CHAR_TYPE>::Compare(const TString<CHAR_TYPE>& string) const
 	{
-		return details::StringCompare(CString(), string.CString());
+		return details::StringCompare(RawPointer(), string.RawPointer(), JINSTL_MAX(Length(), string.Length()));
 	}
 
 	template <typename CHAR_TYPE>
 	bool TString<CHAR_TYPE>::EqualWith(const TString<CHAR_TYPE>& string) const
 	{
-		if(Length() != string.Length())
+		const size_type thisLength = Length();
+		const size_type argumentLength = string.Length();
+		if(thisLength != argumentLength)
 		{
 			return false;
 		}
-		else if(details::StringCompare(CString(), string.CString()) != 0)
+		else if(details::StringCompare(RawPointer(), string.RawPointer(), JINSTL_MAX(thisLength, argumentLength)) != 0)
 		{
 			return false;
 		}
@@ -667,35 +700,13 @@ namespace jinstl
 	template <typename CHAR_TYPE>
 	extern bool operator==(const TString<CHAR_TYPE>& lhs, const TString<CHAR_TYPE>& rhs)
 	{
-		if (lhs.Length() != rhs.Length())
-		{
-			return false;
-		}
-		else if (details::StringCompare(lhs.CString(), rhs.CString()) != 0)
-		{
-			return false;
-		}
-		else
-		{
-			return true;
-		}
+		return lhs.EqualWith(rhs);
 	}
 
 	template <typename CHAR_TYPE>
 	extern bool operator!=(const TString<CHAR_TYPE>& lhs, const TString<CHAR_TYPE>& rhs)
 	{
-		if (lhs.Length() != rhs.Length())
-		{
-			return true;
-		}
-		else if (details::StringCompare(lhs.CString(), rhs.CString()) != 0)
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
+		return !(lhs.EqualWith(rhs));
 	}
 
 	using String = TString<char>;
