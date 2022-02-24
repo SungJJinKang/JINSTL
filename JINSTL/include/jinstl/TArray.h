@@ -62,7 +62,10 @@ namespace jinstl
 		inline typename const_reference_type operator[](const size_type index) const;
 		inline typename pointer_type RawPointer();
 		inline typename const_pointer_type RawPointer() const;
-		void ResizeCount(const size_type targetCount);
+		void ResizeCountWithInitialization(const size_type targetCount);
+		template<typename... ARGS>
+		void ResizeCountWithInitialization(const size_type targetCount, ARGS&&... args);
+		void ResizeCountWithNoInitialization(const size_type targetCount);
 		void Clear();
 		inline void ClearNoDestructor();
 		void Insert(const size_type insertedIndex, const ELEMENT_TYPE& insertedValue);
@@ -433,7 +436,7 @@ namespace jinstl
 	}
 
 	template <typename ELEMENT_TYPE>
-	void TArray<ELEMENT_TYPE>::ResizeCount(const size_type targetCount)
+	void TArray<ELEMENT_TYPE>::ResizeCountWithInitialization(const size_type targetCount)
 	{
 		const size_type curretCount = Count();
 		if (targetCount > curretCount)
@@ -441,10 +444,49 @@ namespace jinstl
 			CapacityResizeGrow(targetCount);
 			for (size_type elementIndex = curretCount; elementIndex < targetCount; elementIndex++)
 			{
-				mBufferEnd = mBufferCapacityEnd;
-				JINSTL_ASSERT(mBufferEnd == mBufferBegin + targetCount);
 				new (mBufferBegin + elementIndex) ELEMENT_TYPE();
 			}
+			mBufferEnd = mBufferCapacityEnd;
+		}
+		else if (targetCount < curretCount)
+		{
+			CapacityResizeShrink(targetCount);
+		}
+	}
+
+	template <typename ELEMENT_TYPE>
+	template <typename ... ARGS>
+	void TArray<ELEMENT_TYPE>::ResizeCountWithInitialization(const size_type targetCount, ARGS&&... args)
+	{
+		JINSTL_ASSERT(targetCount != Count());
+		JINSTL_ASSERT((targetCount < Count()) ? (sizeof...(args) == 0) : true);
+
+		const size_type curretCount = Count();
+		if (targetCount > curretCount)
+		{
+			CapacityResizeGrow(targetCount);
+			for (size_type elementIndex = curretCount; elementIndex < targetCount; elementIndex++)
+			{
+				new (mBufferBegin + elementIndex) ELEMENT_TYPE(std::forward<ARGS>(args)...);
+			}
+			mBufferEnd = mBufferCapacityEnd;
+		}
+		else if (targetCount < curretCount)
+		{
+			CapacityResizeShrink(targetCount);
+		}
+	}
+
+	template <typename ELEMENT_TYPE>
+	void TArray<ELEMENT_TYPE>::ResizeCountWithNoInitialization(const size_type targetCount)
+	{
+		JINSTL_ASSERT(targetCount != Count());
+
+		const size_type curretCount = Count();
+		if (targetCount > curretCount)
+		{
+			CapacityResizeGrow(targetCount);
+			mBufferEnd = mBufferCapacityEnd;
 		}
 		else if (targetCount < curretCount)
 		{

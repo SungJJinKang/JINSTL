@@ -836,7 +836,7 @@ TEST(ArrayTest, Resize1)
 	testArray.PushBack(5);
 	testArray.PushBack(6);
 
-	testArray.ResizeCount(2);
+	testArray.ResizeCountWithInitialization(2);
 
 	EXPECT_EQ(testArray.Capacity(), 2);
 	EXPECT_EQ(testArray.Count(), 2);
@@ -850,7 +850,7 @@ TEST(ArrayTest, Resize2)
 	testArray.PushBack(1);
 	testArray.PushBack(2);
 
-	testArray.ResizeCount(4);
+	testArray.ResizeCountWithInitialization(4);
 
 	EXPECT_EQ(testArray.Capacity(), 4);
 	EXPECT_EQ(testArray.Count(), 4);
@@ -861,7 +861,7 @@ TEST(ArrayTest, Resize2)
 TEST(ArrayTest, Resize3)
 {
 	jinstl::TArray<int> testArray{};
-	testArray.ResizeCount(4);
+	testArray.ResizeCountWithInitialization(4);
 
 	EXPECT_EQ(testArray.Capacity(), 4);
 	EXPECT_EQ(testArray.Count(), 4);
@@ -878,10 +878,42 @@ TEST(ArrayTest, Resize4)
 	testArray.PushBack(1);
 	testArray.PushBack(2);
 
-	testArray.ResizeCount(0);
+	testArray.ResizeCountWithInitialization(0);
 
 	EXPECT_EQ(testArray.Capacity(), 0);
 	EXPECT_EQ(testArray.Count(), 0);
+}
+
+TEST(ArrayTest, Resize5)
+{
+	jinstl::TArray<int> testArray{};
+
+	testArray.ResizeCountWithInitialization(2, 5);
+
+	EXPECT_EQ(testArray[0], 5);
+	EXPECT_EQ(testArray[1], 5);
+	EXPECT_EQ(testArray.Capacity(), 2);
+	EXPECT_EQ(testArray.Count(), 2);
+}
+
+namespace resizeTest6
+{
+	struct A
+	{
+		int _a;
+		A(int a) : _a(a){}
+	};
+
+	TEST(ArrayTest, Resize6)
+	{
+		jinstl::TArray<A> testArray{};
+		testArray.ResizeCountWithInitialization(2, 3);
+
+		EXPECT_EQ(testArray[0]._a, 3);
+		EXPECT_EQ(testArray[1]._a, 3);
+		EXPECT_EQ(testArray.Capacity(), 2);
+		EXPECT_EQ(testArray.Count(), 2);
+	}
 }
 
 TEST(ArrayTest, Reserve1)
@@ -1132,7 +1164,7 @@ namespace test2
 		testArray.EmplaceBack(0);
 		EXPECT_EQ(ConstructTime, 7);
 
-		testArray.ResizeCount(0);
+		testArray.ResizeCountWithInitialization(0);
 		EXPECT_EQ(ConstructTime, 7);
 		EXPECT_EQ(DestructTime, 7);
 	}
@@ -1177,7 +1209,7 @@ namespace test3
 		testArray.EmplaceBack(0);
 		testArray.EmplaceBack(0);
 
-		testArray.ResizeCount(2);
+		testArray.ResizeCountWithInitialization(2);
 		EXPECT_EQ(ConstructTime, 7);
 		EXPECT_EQ(DestructTime, 5);
 	}
