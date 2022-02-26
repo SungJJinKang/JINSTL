@@ -4,7 +4,7 @@
 
 TEST(ArrayTest, CopyConstruct)
 {
-	jinstl::TArray<int> testArray1{};
+	jinstl::TArray<int> testArray1{3};
 	testArray1.PushBack(1);
 	testArray1.PushBack(2);
 	testArray1.PushBack(3);
@@ -38,7 +38,7 @@ TEST(ArrayTest, CopyConstruct)
 
 TEST(ArrayTest, MoveConstruct)
 {
-	jinstl::TArray<int> testArray1{};
+	jinstl::TArray<int> testArray1{3};
 	testArray1.PushBack(1);
 	testArray1.PushBack(2);
 	testArray1.PushBack(3);
@@ -61,12 +61,12 @@ TEST(ArrayTest, MoveConstruct)
 
 TEST(ArrayTest, CopyAssignment1)
 {
-	jinstl::TArray<int> testArray1{};
+	jinstl::TArray<int> testArray1{3};
 	testArray1.PushBack(1);
 	testArray1.PushBack(2);
 	testArray1.PushBack(3);
 
-	jinstl::TArray<int> testArray2{};
+	jinstl::TArray<int> testArray2{3};
 	testArray2 = testArray1;
 	EXPECT_EQ(testArray1[0], 1);
 	EXPECT_EQ(testArray1[1], 2);
@@ -96,12 +96,12 @@ TEST(ArrayTest, CopyAssignment1)
 
 TEST(ArrayTest, CopyAssignment2)
 {
-	jinstl::TArray<int> testArray1{};
+	jinstl::TArray<int> testArray1{3};
 	testArray1.PushBack(1);
 	testArray1.PushBack(2);
 	testArray1.PushBack(3);
 
-	jinstl::TArray<int> testArray2{};
+	jinstl::TArray<int> testArray2{6};
 	testArray2.PushBack(4);
 	testArray2.PushBack(5);
 	testArray2.PushBack(6);
@@ -137,7 +137,7 @@ TEST(ArrayTest, CopyAssignment2)
 
 TEST(ArrayTest, MoveAssignment1)
 {
-	jinstl::TArray<int> testArray1{};
+	jinstl::TArray<int> testArray1{3};
 	testArray1.PushBack(1);
 	testArray1.PushBack(2);
 	testArray1.PushBack(3);
@@ -145,7 +145,7 @@ TEST(ArrayTest, MoveAssignment1)
 	const size_t originalCapacity = testArray1.Capacity();
 	const size_t originalCount = testArray1.Count();
 
-	jinstl::TArray<int> testArray2{};
+	jinstl::TArray<int> testArray2{6};
 	testArray2.PushBack(4);
 	testArray2.PushBack(5);
 	testArray2.PushBack(6);
@@ -167,7 +167,7 @@ TEST(ArrayTest, MoveAssignment1)
 
 TEST(ArrayTest, MoveAssignment2)
 {
-	jinstl::TArray<int> testArray1{};
+	jinstl::TArray<int> testArray1{3};
 	testArray1.PushBack(1);
 	testArray1.PushBack(2);
 	testArray1.PushBack(3);
@@ -175,7 +175,7 @@ TEST(ArrayTest, MoveAssignment2)
 	const size_t originalCapacity = testArray1.Capacity();
 	const size_t originalCount = testArray1.Count();
 
-	jinstl::TArray<int> testArray2{};
+	jinstl::TArray<int> testArray2{0};
 	testArray2 = std::move(testArray1);
 	EXPECT_EQ(testArray1.Capacity(), 0);
 	EXPECT_EQ(testArray1.Count(), 0);
@@ -190,7 +190,7 @@ TEST(ArrayTest, MoveAssignment2)
 
 TEST(ArrayTest, PushBackAndCount)
 {
-	jinstl::TArray<int> testArray{};
+	jinstl::TArray<int> testArray{3};
 	testArray.PushBack(1);
 	testArray.PushBack(2);
 	testArray.PushBack(3);
@@ -199,7 +199,7 @@ TEST(ArrayTest, PushBackAndCount)
 
 TEST(ArrayTest, PushBackAndValue)
 {
-	jinstl::TArray<int> testArray{};
+	jinstl::TArray<int> testArray{3};
 	testArray.PushBack(1);
 	testArray.PushBack(2);
 	testArray.PushBack(3);
@@ -210,7 +210,7 @@ TEST(ArrayTest, PushBackAndValue)
 
 TEST(ArrayTest, PopBackAndCount)
 {
-	jinstl::TArray<int> testArray{};
+	jinstl::TArray<int> testArray{3};
 	testArray.PushBack(1);
 	testArray.PushBack(2);
 	testArray.PushBack(3);
@@ -235,7 +235,7 @@ TEST(ArrayTest, PopBackAndCount)
 
 TEST(ArrayTest, PopBackAndValue)
 {
-	jinstl::TArray<int> testArray{};
+	jinstl::TArray<int> testArray{3};
 	testArray.PushBack(1);
 	testArray.PushBack(2);
 	testArray.PushBack(3);
@@ -263,7 +263,7 @@ TEST(ArrayTest, PopBackAndValue)
 
 TEST(ArrayTest, Insert1)
 {
-	jinstl::TArray<int> testArray{};
+	jinstl::TArray<int> testArray{1};
 
 	testArray.Insert(0, 5);
 	
@@ -273,7 +273,7 @@ TEST(ArrayTest, Insert1)
 
 TEST(ArrayTest, Insert2)
 {
-	jinstl::TArray<int> testArray{};
+	jinstl::TArray<int> testArray{2};
 	testArray.PushBack(5);
 	testArray.PushBack(3);
 
@@ -287,7 +287,7 @@ TEST(ArrayTest, Insert2)
 
 TEST(ArrayTest, Insert3)
 {
-	jinstl::TArray<int> testArray{};
+	jinstl::TArray<int> testArray{2};
 	testArray.PushBack(5);
 	testArray.PushBack(3);
 
@@ -301,7 +301,7 @@ TEST(ArrayTest, Insert3)
 
 TEST(ArrayTest, Insert4)
 {
-	jinstl::TArray<int> testArray{};
+	jinstl::TArray<int> testArray{2};
 	testArray.PushBack(5);
 	testArray.PushBack(3);
 
@@ -315,7 +315,7 @@ TEST(ArrayTest, Insert4)
 
 TEST(ArrayTest, Insert5)
 {
-	jinstl::TArray<int> testArray{};
+	jinstl::TArray<int> testArray{0};
 	testArray.ReserveCapacity(100);
 
 	testArray.Insert(0, 5);
@@ -326,7 +326,7 @@ TEST(ArrayTest, Insert5)
 
 TEST(ArrayTest, Insert6)
 {
-	jinstl::TArray<int> testArray{};
+	jinstl::TArray<int> testArray{0};
 	testArray.ReserveCapacity(100);
 	testArray.PushBack(5);
 	testArray.PushBack(3);
@@ -343,7 +343,7 @@ TEST(ArrayTest, Insert6)
 
 TEST(ArrayTest, Insert7)
 {
-	jinstl::TArray<int> testArray{};
+	jinstl::TArray<int> testArray{0};
 	testArray.ReserveCapacity(100);
 	testArray.PushBack(5);
 	testArray.PushBack(3);
@@ -358,7 +358,7 @@ TEST(ArrayTest, Insert7)
 
 TEST(ArrayTest, Insert8)
 {
-	jinstl::TArray<int> testArray{};
+	jinstl::TArray<int> testArray{0};
 	testArray.ReserveCapacity(100);
 	testArray.PushBack(5);
 	testArray.PushBack(3);
@@ -373,11 +373,11 @@ TEST(ArrayTest, Insert8)
 
 TEST(ArrayTest, CopyInsertArray1)
 {
-	jinstl::TArray<int> testArray1{};
+	jinstl::TArray<int> testArray1{5};
 	testArray1.PushBack(5);
 	testArray1.PushBack(4);
 
-	jinstl::TArray<int> testArray2{};
+	jinstl::TArray<int> testArray2{3};
 	testArray2.PushBack(1);
 	testArray2.PushBack(2);
 	testArray2.PushBack(3);
@@ -399,11 +399,11 @@ TEST(ArrayTest, CopyInsertArray1)
 
 TEST(ArrayTest, CopyInsertArray2)
 {
-	jinstl::TArray<int> testArray1{};
+	jinstl::TArray<int> testArray1{5};
 	testArray1.PushBack(5);
 	testArray1.PushBack(4);
 
-	jinstl::TArray<int> testArray2{};
+	jinstl::TArray<int> testArray2{3};
 	testArray2.PushBack(1);
 	testArray2.PushBack(2);
 	testArray2.PushBack(3);
@@ -425,11 +425,11 @@ TEST(ArrayTest, CopyInsertArray2)
 
 TEST(ArrayTest, CopyInsertArray3)
 {
-	jinstl::TArray<int> testArray1{};
+	jinstl::TArray<int> testArray1{5};
 	testArray1.PushBack(5);
 	testArray1.PushBack(4);
 
-	jinstl::TArray<int> testArray2{};
+	jinstl::TArray<int> testArray2{3};
 	testArray2.PushBack(1);
 	testArray2.PushBack(2);
 	testArray2.PushBack(3);
@@ -452,12 +452,12 @@ TEST(ArrayTest, CopyInsertArray3)
 
 TEST(ArrayTest, CopyInsertArray4)
 {
-	jinstl::TArray<int> testArray1{};
+	jinstl::TArray<int> testArray1{0};
 	testArray1.ReserveCapacity(100);
 	testArray1.PushBack(5);
 	testArray1.PushBack(4);
 
-	jinstl::TArray<int> testArray2{};
+	jinstl::TArray<int> testArray2{3};
 	testArray2.PushBack(1);
 	testArray2.PushBack(2);
 	testArray2.PushBack(3);
@@ -479,12 +479,12 @@ TEST(ArrayTest, CopyInsertArray4)
 
 TEST(ArrayTest, CopyInsertArray5)
 {
-	jinstl::TArray<int> testArray1{};
+	jinstl::TArray<int> testArray1{0};
 	testArray1.ReserveCapacity(100);
 	testArray1.PushBack(5);
 	testArray1.PushBack(4);
 
-	jinstl::TArray<int> testArray2{};
+	jinstl::TArray<int> testArray2{3};
 	testArray2.PushBack(1);
 	testArray2.PushBack(2);
 	testArray2.PushBack(3);
@@ -506,12 +506,12 @@ TEST(ArrayTest, CopyInsertArray5)
 
 TEST(ArrayTest, CopyInsertArray6)
 {
-	jinstl::TArray<int> testArray1{};
+	jinstl::TArray<int> testArray1{0};
 	testArray1.ReserveCapacity(100);
 	testArray1.PushBack(5);
 	testArray1.PushBack(4);
 
-	jinstl::TArray<int> testArray2{};
+	jinstl::TArray<int> testArray2{3};
 	testArray2.PushBack(1);
 	testArray2.PushBack(2);
 	testArray2.PushBack(3);
@@ -533,11 +533,11 @@ TEST(ArrayTest, CopyInsertArray6)
 
 TEST(ArrayTest, MoveInsertArray1)
 {
-	jinstl::TArray<int> testArray1{};
+	jinstl::TArray<int> testArray1{2};
 	testArray1.PushBack(5);
 	testArray1.PushBack(4);
 
-	jinstl::TArray<int> testArray2{};
+	jinstl::TArray<int> testArray2{3};
 	testArray2.PushBack(1);
 	testArray2.PushBack(2);
 	testArray2.PushBack(3);
@@ -560,11 +560,11 @@ TEST(ArrayTest, MoveInsertArray1)
 
 TEST(ArrayTest, MoveInsertArray2)
 {
-	jinstl::TArray<int> testArray1{};
+	jinstl::TArray<int> testArray1{2};
 	testArray1.PushBack(5);
 	testArray1.PushBack(4);
 
-	jinstl::TArray<int> testArray2{};
+	jinstl::TArray<int> testArray2{3};
 	testArray2.PushBack(1);
 	testArray2.PushBack(2);
 	testArray2.PushBack(3);
@@ -584,11 +584,11 @@ TEST(ArrayTest, MoveInsertArray2)
 
 TEST(ArrayTest, MoveInsertArray3)
 {
-	jinstl::TArray<int> testArray1{};
+	jinstl::TArray<int> testArray1{2};
 	testArray1.PushBack(5);
 	testArray1.PushBack(4);
 
-	jinstl::TArray<int> testArray2{};
+	jinstl::TArray<int> testArray2{3};
 	testArray2.PushBack(1);
 	testArray2.PushBack(2);
 	testArray2.PushBack(3);
@@ -608,12 +608,12 @@ TEST(ArrayTest, MoveInsertArray3)
 
 TEST(ArrayTest, MoveInsertArray4)
 {
-	jinstl::TArray<int> testArray1{};
+	jinstl::TArray<int> testArray1{0};
 	testArray1.ReserveCapacity(100);
 	testArray1.PushBack(5);
 	testArray1.PushBack(4);
 
-	jinstl::TArray<int> testArray2{};
+	jinstl::TArray<int> testArray2{3};
 	testArray2.PushBack(1);
 	testArray2.PushBack(2);
 	testArray2.PushBack(3);
@@ -636,12 +636,12 @@ TEST(ArrayTest, MoveInsertArray4)
 
 TEST(ArrayTest, MoveInsertArray5)
 {
-	jinstl::TArray<int> testArray1{};
+	jinstl::TArray<int> testArray1{0};
 	testArray1.ReserveCapacity(100);
 	testArray1.PushBack(5);
 	testArray1.PushBack(4);
 
-	jinstl::TArray<int> testArray2{};
+	jinstl::TArray<int> testArray2{3};
 	testArray2.PushBack(1);
 	testArray2.PushBack(2);
 	testArray2.PushBack(3);
@@ -661,12 +661,12 @@ TEST(ArrayTest, MoveInsertArray5)
 
 TEST(ArrayTest, MoveInsertArray6)
 {
-	jinstl::TArray<int> testArray1{};
+	jinstl::TArray<int> testArray1{0};
 	testArray1.ReserveCapacity(100);
 	testArray1.PushBack(5);
 	testArray1.PushBack(4);
 
-	jinstl::TArray<int> testArray2{};
+	jinstl::TArray<int> testArray2{3};
 	testArray2.PushBack(1);
 	testArray2.PushBack(2);
 	testArray2.PushBack(3);
@@ -686,7 +686,7 @@ TEST(ArrayTest, MoveInsertArray6)
 
 TEST(ArrayTest, ClearAndCapacity)
 {
-	jinstl::TArray<int> testArray{};
+	jinstl::TArray<int> testArray{6};
 	testArray.PushBack(1);
 	testArray.PushBack(2);
 	testArray.PushBack(3);
@@ -703,7 +703,7 @@ TEST(ArrayTest, ClearAndCapacity)
 
 TEST(ArrayTest, ClearNoDestructorAndCapacity)
 {
-	jinstl::TArray<int> testArray{};
+	jinstl::TArray<int> testArray{6};
 	testArray.PushBack(1);
 	testArray.PushBack(2);
 	testArray.PushBack(3);
@@ -720,7 +720,7 @@ TEST(ArrayTest, ClearNoDestructorAndCapacity)
 
 TEST(ArrayTest, Remove)
 {
-	jinstl::TArray<int> testArray{};
+	jinstl::TArray<int> testArray{6};
 	testArray.PushBack(1);
 	testArray.PushBack(2);
 	testArray.PushBack(3);
@@ -775,7 +775,7 @@ TEST(ArrayTest, Remove)
 
 TEST(ArrayTest, Contain)
 {
-	jinstl::TArray<int> testArray{};
+	jinstl::TArray<int> testArray{6};
 	testArray.PushBack(1);
 	testArray.PushBack(2);
 	testArray.PushBack(3);
@@ -792,7 +792,7 @@ TEST(ArrayTest, Contain)
 
 TEST(ArrayTest, SwapPopBack)
 {
-	jinstl::TArray<int> testArray{};
+	jinstl::TArray<int> testArray{6};
 	testArray.PushBack(1);
 	testArray.PushBack(2);
 	testArray.PushBack(3);
@@ -810,7 +810,7 @@ TEST(ArrayTest, SwapPopBack)
 
 TEST(ArrayTest, Find)
 {
-	jinstl::TArray<int> testArray{};
+	jinstl::TArray<int> testArray{7};
 	testArray.PushBack(1);
 	testArray.PushBack(2);
 	testArray.PushBack(3);
@@ -828,7 +828,7 @@ TEST(ArrayTest, Find)
 
 TEST(ArrayTest, Resize1)
 {
-	jinstl::TArray<int> testArray{};
+	jinstl::TArray<int> testArray{7};
 	testArray.PushBack(1);
 	testArray.PushBack(2);
 	testArray.PushBack(3);
@@ -846,7 +846,7 @@ TEST(ArrayTest, Resize1)
 
 TEST(ArrayTest, Resize2)
 {
-	jinstl::TArray<int> testArray{};
+	jinstl::TArray<int> testArray{2};
 	testArray.PushBack(1);
 	testArray.PushBack(2);
 
@@ -860,7 +860,7 @@ TEST(ArrayTest, Resize2)
 
 TEST(ArrayTest, Resize3)
 {
-	jinstl::TArray<int> testArray{};
+	jinstl::TArray<int> testArray{0};
 	testArray.ResizeCountWithInitialization(4);
 
 	EXPECT_EQ(testArray.Capacity(), 4);
@@ -874,7 +874,7 @@ TEST(ArrayTest, Resize3)
 
 TEST(ArrayTest, Resize4)
 {
-	jinstl::TArray<int> testArray{};
+	jinstl::TArray<int> testArray{2};
 	testArray.PushBack(1);
 	testArray.PushBack(2);
 
@@ -886,7 +886,7 @@ TEST(ArrayTest, Resize4)
 
 TEST(ArrayTest, Resize5)
 {
-	jinstl::TArray<int> testArray{};
+	jinstl::TArray<int> testArray{0};
 
 	testArray.ResizeCountWithInitialization(2, 5);
 
@@ -906,7 +906,7 @@ namespace resizeTest6
 
 	TEST(ArrayTest, Resize6)
 	{
-		jinstl::TArray<A> testArray{};
+		jinstl::TArray<A> testArray{0};
 		testArray.ResizeCountWithInitialization(2, 3);
 
 		EXPECT_EQ(testArray[0]._a, 3);
@@ -918,7 +918,7 @@ namespace resizeTest6
 
 TEST(ArrayTest, Reserve1)
 {
-	jinstl::TArray<int> testArray{};
+	jinstl::TArray<int> testArray{2};
 	testArray.PushBack(1);
 	testArray.PushBack(2);
 
@@ -930,7 +930,7 @@ TEST(ArrayTest, Reserve1)
 
 TEST(ArrayTest, Reserve2)
 {
-	jinstl::TArray<int> testArray{};
+	jinstl::TArray<int> testArray{2};
 	testArray.PushBack(1);
 	testArray.PushBack(2);
 
@@ -946,7 +946,7 @@ TEST(ArrayTest, Reserve2)
 
 TEST(ArrayTest, Reserve3)
 {
-	jinstl::TArray<int> testArray{};
+	jinstl::TArray<int> testArray{2};
 	testArray.PushBack(1);
 	testArray.PushBack(2);
 
@@ -961,7 +961,7 @@ TEST(ArrayTest, Reserve3)
 
 TEST(ArrayTest, RawPointer)
 {
-	jinstl::TArray<int> testArray{};
+	jinstl::TArray<int> testArray{2};
 	testArray.PushBack(1);
 	testArray.PushBack(2);
 	
@@ -971,7 +971,7 @@ TEST(ArrayTest, RawPointer)
 
 TEST(ArrayTest, Destory)
 {
-	jinstl::TArray<int> testArray{};
+	jinstl::TArray<int> testArray{2};
 	testArray.PushBack(1);
 	testArray.PushBack(2);
 
@@ -984,7 +984,7 @@ TEST(ArrayTest, Destory)
 
 TEST(ArrayTest, Empty)
 {
-	jinstl::TArray<int> testArray{};
+	jinstl::TArray<int> testArray{2};
 	testArray.PushBack(1);
 	testArray.PushBack(2);
 	
@@ -1016,7 +1016,7 @@ namespace
 
 	TEST(ArrayTest, EmplaceBack)
 	{
-		jinstl::TArray<A> testArray{};
+		jinstl::TArray<A> testArray{3};
 		testArray.EmplaceBack(2);
 		testArray.EmplaceBack(1);
 		testArray.EmplaceBack(0);
@@ -1034,7 +1034,7 @@ namespace
 
 	TEST(ArrayTest, LastElement)
 	{
-		jinstl::TArray<A> testArray{};
+		jinstl::TArray<A> testArray{3};
 		testArray.EmplaceBack(2);
 		testArray.EmplaceBack(1);
 		testArray.EmplaceBack(0);
@@ -1048,7 +1048,7 @@ namespace
 	
 	TEST(ArrayTest, FirstElement)
 	{
-		jinstl::TArray<A> testArray{};
+		jinstl::TArray<A> testArray{3};
 		testArray.EmplaceBack(2);
 		testArray.EmplaceBack(1);
 		testArray.EmplaceBack(0);
@@ -1087,7 +1087,7 @@ namespace test1
 
 	TEST(ArrayTest, ConstructDestructCount1)
 	{
-		jinstl::TArray<B> testArray{};
+		jinstl::TArray<B> testArray{5};
 		testArray.EmplaceBack(2);
 		EXPECT_EQ(ConstructTime, 1);
 		testArray.EmplaceBack(1);
@@ -1148,7 +1148,7 @@ namespace test2
 
 	TEST(ArrayTest, ConstructDestructCount2)
 	{
-		jinstl::TArray<B> testArray{};
+		jinstl::TArray<B> testArray{7};
 		testArray.EmplaceBack(2);
 		EXPECT_EQ(ConstructTime, 1);
 		testArray.EmplaceBack(1);
@@ -1200,7 +1200,7 @@ namespace test3
 
 	TEST(ArrayTest, ConstructDestructCount3)
 	{
-		jinstl::TArray<B> testArray{};
+		jinstl::TArray<B> testArray{7};
 		testArray.EmplaceBack(2);
 		testArray.EmplaceBack(1);
 		testArray.EmplaceBack(0);
@@ -1245,7 +1245,7 @@ namespace test4
 
 	TEST(ArrayTest, ConstructDestructCount4)
 	{
-		jinstl::TArray<B> testArray{};
+		jinstl::TArray<B> testArray{7};
 		testArray.EmplaceBack(2);
 		testArray.EmplaceBack(1);
 		testArray.EmplaceBack(0);
@@ -1297,7 +1297,7 @@ namespace test5
 
 	TEST(ArrayTest, ConstructDestructCount5)
 	{
-		jinstl::TArray<B> testArray1{};
+		jinstl::TArray<B> testArray1{3};
 		testArray1.EmplaceBack(2);
 		testArray1.EmplaceBack(1);
 		testArray1.EmplaceBack(0);
@@ -1347,7 +1347,7 @@ namespace test6
 
 	TEST(ArrayTest, ConstructDestructCount6)
 	{
-		jinstl::TArray<B> testArray1{};
+		jinstl::TArray<B> testArray1{3};
 		testArray1.EmplaceBack(2);
 		testArray1.EmplaceBack(1);
 		testArray1.EmplaceBack(0);

@@ -41,8 +41,9 @@ namespace jinstl
 
 	public:
 
-		TArray();
-		TArray(allocator::Allocator* const allocator);
+		TArray() = delete;
+		TArray(const size_type initialReservedCapacity);
+		TArray(allocator::Allocator* const allocator, const size_type initialReservedCapacity);
 		~TArray();
 		TArray(const TArray& arr);
 		TArray(TArray&& arr) noexcept;
@@ -224,16 +225,18 @@ namespace jinstl
 	}
 
 	template <typename ELEMENT_TYPE>
-	TArray<ELEMENT_TYPE>::TArray()
+	TArray<ELEMENT_TYPE>::TArray(const size_type initialReservedCapacity)
 	{
 		NullifyBufferPtr();
+		ReserveCapacity(initialReservedCapacity);
 	}
 
 	template <typename ELEMENT_TYPE>
-	TArray<ELEMENT_TYPE>::TArray(allocator::Allocator* const allocator)
+	TArray<ELEMENT_TYPE>::TArray(allocator::Allocator* const allocator, const size_type initialReservedCapacity)
 		: AllocBase(allocator)
 	{
 		NullifyBufferPtr();
+		ReserveCapacity(initialReservedCapacity);
 	}
 
 	template <typename ELEMENT_TYPE>
