@@ -7,6 +7,9 @@
 
 namespace jinstl
 {
+
+#define JINSTL_TSTRING_SMALL_SIZE_LOCAL_BUFFER_CHARACTER_COUNT 16
+
 	template <typename CHAR_TYPE>
 	class TString : public AllocBase
 	{
@@ -22,12 +25,15 @@ namespace jinstl
 
 	private:
 
+		CHAR_TYPE mSmallSizeLocalBuffer[JINSTL_TSTRING_SMALL_SIZE_LOCAL_BUFFER_CHARACTER_COUNT];
+
 		CHAR_TYPE* mStringBegin;
 		CHAR_TYPE* mStringEnd;
 		CHAR_TYPE* mStringCapacityEnd;
 
 	private:
-		
+
+		void CopyConstructFromTString(const TString& arr);
 		void RangeInitialize(const_pointer_type cStringBegin, const_pointer_type cStringEnd);
 		void RangeInitialize(const_pointer_type cString);
 		inline void Destroy();
@@ -36,6 +42,7 @@ namespace jinstl
 		void CapacityResizeGrowForInsert(const size_type insertedIndex, const size_type insertedElementCount);
 		void CapacityResizeShrink(const size_type size);
 		inline void MoveBackwardCharacters(const size_type targetIndex, const size_type movedCharacterCount);
+		inline void ResizeWithoutCopyOriginalString(const size_type length, const size_type capacity);
 		void Expand();
 
 	public:
@@ -90,17 +97,32 @@ namespace jinstl
 	};
 
 	template <typename CHAR_TYPE>
+	void TString<CHAR_TYPE>::CopyConstructFromTString(const TString& arr)
+	{
+		const size_type passedTStringElementCount = arr.Length();
+		if (passedTStringElementCount > 0)
+		{
+			ResizeWithoutCopyOriginalString(passedTStringElementCount, passedTStringElementCount + 1);
+
+			std::memcpy(mStringBegin, arr.mStringBegin, sizeof(CHAR_TYPE) * passedTStringElementCount);
+		}
+		else
+		{
+			NullifyBufferPtr();
+		}
+	}
+
+	template <typename CHAR_TYPE>
 	void TString<CHAR_TYPE>::RangeInitialize(const_pointer_type cStringBegin, const_pointer_type cStringEnd)
 	{
 		JINSTL_ASSERT(cStringEnd >= cStringBegin);
 
 		if(cStringEnd > cStringBegin)
 		{
-			const size_type stringByteSize = reinterpret_cast<const char*>(cStringEnd) - reinterpret_cast<const char*>(cStringBegin);
-			mStringBegin = reinterpret_cast<CHAR_TYPE*>(Allocate(stringByteSize + sizeof(CHAR_TYPE) /* This protect reallocation when call CString */));
-			mStringEnd = reinterpret_cast<CHAR_TYPE*>(reinterpret_cast<char*>(mStringBegin) + stringByteSize);
-			mStringCapacityEnd = reinterpret_cast<CHAR_TYPE*>(reinterpret_cast<char*>(mStringBegin) + stringByteSize + sizeof(CHAR_TYPE));
-			std::memcpy(mStringBegin, cStringBegin, stringByteSize);
+			const size_type stringElementCount = cStringEnd - cStringBegin;
+			ResizeWithoutCopyOriginalString(stringElementCount, stringElementCount + 1);
+
+			std::memcpy(mStringBegin, cStringBegin, stringElementCount * sizeof(CHAR_TYPE));
 		}
 		else
 		{
@@ -133,7 +155,7 @@ namespace jinstl
 	template <typename CHAR_TYPE>
 	inline void TString<CHAR_TYPE>::Destroy()
 	{
-		if (mStringBegin != nullptr)
+		if (mStringBegin != nullptr && mStringBegin != mSmallSizeLocalBuffer)
 		{
 			DeAllocate(mStringBegin);
 		}
@@ -153,17 +175,30 @@ namespace jinstl
 		JINSTL_ASSERT(reAllocElementCount > Length());
 
 		const size_type currentElementCount = Length();
-		CHAR_TYPE* const newlyAllocatedBufferBegin = reinterpret_cast<CHAR_TYPE*>(Allocate(reAllocElementCount * sizeof(CHAR_TYPE)));
-		std::memcpy(newlyAllocatedBufferBegin, mStringBegin, sizeof(CHAR_TYPE) * currentElementCount);
 
-		if (mStringBegin != nullptr)
+		CHAR_TYPE* newlyAllocatedBufferBegin;
+
+		if(JINSTL_TSTRING_SMALL_SIZE_LOCAL_BUFFER_CHARACTER_COUNT >= reAllocElementCount)
 		{
-			DeAllocate(mStringBegin);
+			newlyAllocatedBufferBegin = mSmallSizeLocalBuffer;
 		}
+		else
+		{
+			newlyAllocatedBufferBegin = reinterpret_cast<CHAR_TYPE*>(Allocate(reAllocElementCount * sizeof(CHAR_TYPE)));
+		}
+
+		if (mStringBegin != newlyAllocatedBufferBegin)
+		{
+			std::memcpy(newlyAllocatedBufferBegin, mStringBegin, sizeof(CHAR_TYPE) * currentElementCount);
+		}
+
+		Destroy();
 
 		mStringBegin = newlyAllocatedBufferBegin;
 		mStringEnd = newlyAllocatedBufferBegin + currentElementCount;
 		mStringCapacityEnd = newlyAllocatedBufferBegin + reAllocElementCount;
+
+		
 	}
 
 	template <typename CHAR_TYPE>
@@ -181,15 +216,24 @@ namespace jinstl
 			const size_type currentStringLength = Length();
 			const size_t targetCapacity = currentStringLength + insertedElementCount;
 
-			CHAR_TYPE* const newlyAllocatedStringBegin = reinterpret_cast<CHAR_TYPE*>(Allocate(targetCapacity * sizeof(CHAR_TYPE)));
-			
-			std::memcpy(newlyAllocatedStringBegin, mStringBegin, insertedIndex * sizeof(CHAR_TYPE));
+			CHAR_TYPE* newlyAllocatedStringBegin;
+			if (JINSTL_TSTRING_SMALL_SIZE_LOCAL_BUFFER_CHARACTER_COUNT >= targetCapacity)
+			{
+				newlyAllocatedStringBegin = mSmallSizeLocalBuffer;
+			}
+			else
+			{
+				newlyAllocatedStringBegin = reinterpret_cast<CHAR_TYPE*>(Allocate(targetCapacity * sizeof(CHAR_TYPE)));
+			}
+
+			if (mStringBegin != newlyAllocatedStringBegin)
+			{
+				std::memcpy(newlyAllocatedStringBegin, mStringBegin, insertedIndex * sizeof(CHAR_TYPE));
+			}
+
 			std::memcpy(newlyAllocatedStringBegin + insertedIndex + insertedElementCount, mStringBegin + insertedIndex, (currentStringLength - insertedIndex) * sizeof(CHAR_TYPE));
 			
-			if (mStringBegin != nullptr)
-			{
-				DeAllocate(mStringBegin);
-			}
+			Destroy();
 
 			mStringBegin = newlyAllocatedStringBegin;
 			mStringEnd = newlyAllocatedStringBegin + currentStringLength;
@@ -208,11 +252,22 @@ namespace jinstl
 
 		if (reAllocElementCount > 0)
 		{
-			newlyAllocatedBufferBegin = reinterpret_cast<CHAR_TYPE*>(Allocate(reAllocElementCount * sizeof(CHAR_TYPE)));
-			std::memcpy(newlyAllocatedBufferBegin, mStringBegin, sizeof(CHAR_TYPE) * reAllocElementCount);
+			if (JINSTL_TSTRING_SMALL_SIZE_LOCAL_BUFFER_CHARACTER_COUNT >= reAllocElementCount)
+			{
+				newlyAllocatedBufferBegin = mSmallSizeLocalBuffer;
+			}
+			else
+			{
+				newlyAllocatedBufferBegin = reinterpret_cast<CHAR_TYPE*>(Allocate(reAllocElementCount * sizeof(CHAR_TYPE)));
+			}
+
+			if(mStringBegin != mSmallSizeLocalBuffer)
+			{
+				std::memcpy(newlyAllocatedBufferBegin, mStringBegin, sizeof(CHAR_TYPE) * reAllocElementCount);
+			}
 		}
 
-		DeAllocate(mStringBegin);
+		Destroy();
 
 		mStringBegin = newlyAllocatedBufferBegin;
 		mStringEnd = newlyAllocatedBufferBegin + reAllocElementCount;
@@ -224,6 +279,24 @@ namespace jinstl
 	{
 		const size_type currentLenth = Length();
 		std::memmove(mStringBegin + targetIndex + movedCharacterCount, mStringBegin + targetIndex, (currentLenth - targetIndex) * sizeof(CHAR_TYPE));
+	}
+	
+	template <typename CHAR_TYPE>
+	inline void TString<CHAR_TYPE>::ResizeWithoutCopyOriginalString(const size_type length, const size_type capacity)
+	{
+		JINSTL_ASSERT(capacity >= length);
+
+		if(capacity > JINSTL_TSTRING_SMALL_SIZE_LOCAL_BUFFER_CHARACTER_COUNT)
+		{
+			mStringBegin = reinterpret_cast<CHAR_TYPE*>(Allocate(capacity * sizeof(CHAR_TYPE)));
+		}
+		else
+		{
+			mStringBegin = mSmallSizeLocalBuffer;
+		}
+
+		mStringEnd = mStringBegin + length;
+		mStringCapacityEnd = mStringBegin + capacity;
 	}
 
 	template <typename CHAR_TYPE>
@@ -269,27 +342,23 @@ namespace jinstl
 	template <typename CHAR_TYPE>
 	TString<CHAR_TYPE>::TString(const TString& arr)
 	{
-		const size_type passedTStringElementSize = arr.Length();
-		if (passedTStringElementSize > 0)
-		{
-			mStringBegin = reinterpret_cast<CHAR_TYPE*>(Allocate( (passedTStringElementSize + 1/* This protect reallocation when call CString */) * sizeof(CHAR_TYPE)));
-			mStringEnd = mStringBegin + passedTStringElementSize;
-			mStringCapacityEnd = mStringBegin + passedTStringElementSize + 1;
-
-			std::memcpy(mStringBegin, arr.mStringBegin, sizeof(CHAR_TYPE) * passedTStringElementSize);
-		}
-		else
-		{
-			NullifyBufferPtr();
-		}
+		CopyConstructFromTString(arr);
 	}
 
 	template <typename CHAR_TYPE>
 	TString<CHAR_TYPE>::TString(TString&& arr) noexcept
 	{
-		mStringBegin = arr.mStringBegin;
-		mStringEnd = arr.mStringEnd;
-		mStringCapacityEnd = arr.mStringCapacityEnd;
+		if(arr.mStringBegin == arr.mSmallSizeLocalBuffer)
+		{
+			CopyConstructFromTString(arr);
+		}
+		else
+		{
+			mStringBegin = arr.mStringBegin;
+			mStringEnd = arr.mStringEnd;
+			mStringCapacityEnd = arr.mStringCapacityEnd;
+		}
+		
 
 		arr.NullifyBufferPtr();
 	}
@@ -308,9 +377,7 @@ namespace jinstl
 		{
 			Destroy();
 
-			mStringBegin = reinterpret_cast<CHAR_TYPE*>(Allocate((passedTStringElementCount + 1/* This protect reallocation when call CString */) * sizeof(CHAR_TYPE)));
-			mStringEnd = mStringBegin + passedTStringElementCount;
-			mStringCapacityEnd = mStringBegin + passedTStringElementCount + 1;
+			ResizeWithoutCopyOriginalString(passedTStringElementCount, passedTStringElementCount + 1);
 
 			std::memcpy(mStringBegin, arr.mStringBegin, sizeof(CHAR_TYPE) * passedTStringElementCount);
 		}
@@ -321,11 +388,18 @@ namespace jinstl
 	template <typename CHAR_TYPE>
 	TString<CHAR_TYPE>& TString<CHAR_TYPE>::operator=(TString<CHAR_TYPE>&& arr) noexcept
 	{
-		Destroy();
+		if (arr.mStringBegin == arr.mSmallSizeLocalBuffer)
+		{
+			*this = arr; // Copy assignment
+		}
+		else
+		{
+			Destroy();
 
-		mStringBegin = arr.mStringBegin;
-		mStringEnd = arr.mStringEnd;
-		mStringCapacityEnd = arr.mStringCapacityEnd;
+			mStringBegin = arr.mStringBegin;
+			mStringEnd = arr.mStringEnd;
+			mStringCapacityEnd = arr.mStringCapacityEnd;
+		}
 
 		arr.NullifyBufferPtr();
 

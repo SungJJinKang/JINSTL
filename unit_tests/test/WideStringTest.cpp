@@ -335,6 +335,35 @@ TEST(WideStringTest, Append11)
 	EXPECT_EQ(str.Length(), 9);
 }
 
+TEST(WideStringTest, Append12)
+{
+	jinstl::WideString str{ L"abcdef" };
+	str.Append(L"ghijklmnopqrstu");
+
+	EXPECT_EQ(str[0], L'a');
+	EXPECT_EQ(str[1], L'b');
+	EXPECT_EQ(str[2], L'c');
+	EXPECT_EQ(str[3], L'd');
+	EXPECT_EQ(str[4], L'e');
+	EXPECT_EQ(str[5], L'f');
+	EXPECT_EQ(str[6], L'g');
+	EXPECT_EQ(str[7], L'h');
+	EXPECT_EQ(str[8], L'i');
+	EXPECT_EQ(str[9], L'j');
+	EXPECT_EQ(str[10], L'k');
+	EXPECT_EQ(str[11], L'l');
+	EXPECT_EQ(str[12], L'm');
+	EXPECT_EQ(str[13], L'n');
+	EXPECT_EQ(str[14], L'o');
+	EXPECT_EQ(str[15], L'p');
+	EXPECT_EQ(str[16], L'q');
+	EXPECT_EQ(str[17], L'r');
+	EXPECT_EQ(str[18], L's');
+	EXPECT_EQ(str[19], L't');
+	EXPECT_EQ(str[20], L'u');
+	EXPECT_EQ(str.Length(), 21);
+}
+
 
 TEST(WideStringTest, operatorAppend1)
 {
@@ -551,6 +580,16 @@ TEST(WideStringTest, ResizeLength4)
 	jinstl::WideString str{  };
 	str.ResizeLength(0);
 	EXPECT_EQ(str.Length(), 0);
+}
+
+TEST(WideStringTest, ResizeLength5)
+{
+	jinstl::WideString str{ L"dsfdsfkndsfkdsnfksdnfsdffdsfdsfds" };
+	str.ResizeLength(2);
+	EXPECT_EQ(str[0], L'd');
+	EXPECT_EQ(str[1], L's');
+	EXPECT_EQ(str.Length(), 2);
+	EXPECT_EQ(str.Length(), 2);
 }
 
 TEST(WideStringTest, Clear1)

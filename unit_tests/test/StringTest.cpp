@@ -335,6 +335,34 @@ TEST(CharStringTest, Append11)
 	EXPECT_EQ(str.Length(), 9);
 }
 
+TEST(CharStringTest, Append12)
+{
+	jinstl::String str{ "abcdef" };
+	str.Append("ghijklmnopqrstu");
+
+	EXPECT_EQ(str[0], 'a');
+	EXPECT_EQ(str[1], 'b');
+	EXPECT_EQ(str[2], 'c');
+	EXPECT_EQ(str[3], 'd');
+	EXPECT_EQ(str[4], 'e');
+	EXPECT_EQ(str[5], 'f');
+	EXPECT_EQ(str[6], 'g');
+	EXPECT_EQ(str[7], 'h');
+	EXPECT_EQ(str[8], 'i');
+	EXPECT_EQ(str[9], 'j');
+	EXPECT_EQ(str[10], 'k');
+	EXPECT_EQ(str[11], 'l');
+	EXPECT_EQ(str[12], 'm');
+	EXPECT_EQ(str[13], 'n');
+	EXPECT_EQ(str[14], 'o');
+	EXPECT_EQ(str[15], 'p');
+	EXPECT_EQ(str[16], 'q');
+	EXPECT_EQ(str[17], 'r');
+	EXPECT_EQ(str[18], 's');
+	EXPECT_EQ(str[19], 't');
+	EXPECT_EQ(str[20], 'u');
+	EXPECT_EQ(str.Length(), 21);
+}
 
 TEST(CharStringTest, operatorAppend1)
 {
@@ -551,6 +579,16 @@ TEST(CharStringTest, ResizeLength4)
 	jinstl::String str{  };
 	str.ResizeLength(0);
 	EXPECT_EQ(str.Length(), 0);
+}
+
+TEST(CharStringTest, ResizeLength5)
+{
+	jinstl::String str{ "dsfdsfkndsfkdsnfksdnfsdffdsfdsfds" };
+	str.ResizeLength(2);
+	EXPECT_EQ(str[0], 'd');
+	EXPECT_EQ(str[1], 's');
+	EXPECT_EQ(str.Length(), 2);
+	EXPECT_EQ(str.Length(), 2);
 }
 
 TEST(CharStringTest, Clear1)
