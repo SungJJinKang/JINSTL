@@ -31,7 +31,8 @@ namespace jinstl
 
 	private:
 
-		void Destroy();
+		inline void Destroy();
+		inline void DestroyWithDestructor();
 		inline void NullifyBufferPtr();
 		void CapacityResizeGrow(const size_type size);
 		void CapacityResizeGrowForInsert(const size_type insertedIndex, const size_type insertedElementCount);
@@ -87,7 +88,16 @@ namespace jinstl
 	};
 
 	template <typename ELEMENT_TYPE>
-	void TArray<ELEMENT_TYPE>::Destroy()
+	inline void TArray<ELEMENT_TYPE>::Destroy()
+	{
+		if (mBufferBegin != nullptr)
+		{
+			DeAllocate(mBufferBegin);
+		}
+	}
+
+	template <typename ELEMENT_TYPE>
+	inline void TArray<ELEMENT_TYPE>::DestroyWithDestructor()
 	{
 		if (mBufferBegin != nullptr)
 		{
@@ -122,11 +132,8 @@ namespace jinstl
 			new (newlyAllocatedBufferBegin + elementIndex) ELEMENT_TYPE(std::move(mBufferBegin[elementIndex]));
 		}
 
-		if (mBufferBegin != nullptr)
-		{
-			DeAllocate(mBufferBegin);
-		}
-		
+		Destroy();
+
 		mBufferBegin = newlyAllocatedBufferBegin;
 		mBufferEnd = newlyAllocatedBufferBegin + currentElementCount;
 		mBufferCapacityEnd = newlyAllocatedBufferBegin + reAllocElementCount;
@@ -163,10 +170,7 @@ namespace jinstl
 				new (newlyAllocatedBufferBegin + elementIndex) ELEMENT_TYPE(std::move(mBufferBegin[elementIndex - insertedElementCount]));
 			}
 
-			if (mBufferBegin != nullptr)
-			{
-				DeAllocate(mBufferBegin);
-			}
+			Destroy();
 
 			mBufferBegin = newlyAllocatedBufferBegin;
 			mBufferEnd = newlyAllocatedBufferBegin + currentElementCount;
@@ -199,7 +203,7 @@ namespace jinstl
 			(mBufferBegin + elementIndex)->~ELEMENT_TYPE();
 		}
 
-		DeAllocate(mBufferBegin);
+		Destroy();
 
 		mBufferBegin = newlyAllocatedBufferBegin;
 		mBufferEnd = newlyAllocatedBufferBegin + reAllocElementCount;
@@ -242,7 +246,7 @@ namespace jinstl
 	template <typename ELEMENT_TYPE>
 	TArray<ELEMENT_TYPE>::~TArray()
 	{
-		Destroy();
+		DestroyWithDestructor();
 		NullifyBufferPtr();
 	}
 
@@ -298,7 +302,7 @@ namespace jinstl
 		}
 		else
 		{
-			Destroy();
+			DestroyWithDestructor();
 
 			mBufferBegin = reinterpret_cast<ELEMENT_TYPE*>(Allocate(passedArrayElementCount * sizeof(ELEMENT_TYPE)));
 			mBufferEnd = mBufferBegin + passedArrayElementCount;
@@ -316,7 +320,7 @@ namespace jinstl
 	template <typename ELEMENT_TYPE>
 	TArray<ELEMENT_TYPE>& TArray<ELEMENT_TYPE>::operator=(TArray<ELEMENT_TYPE>&& arr) noexcept
 	{
-		Destroy();
+		DestroyWithDestructor();
 
 		mBufferBegin = arr.mBufferBegin;
 		mBufferEnd = arr.mBufferEnd;
