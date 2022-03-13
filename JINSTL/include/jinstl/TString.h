@@ -54,8 +54,8 @@ namespace jinstl
 		~TString();
 		TString(const TString& arr);
 		TString(TString&& arr) noexcept;
-		TString& operator=(const TString& arr);
-		TString& operator=(TString&& arr) noexcept;
+		TString& operator=(const TString& str);
+		TString& operator=(TString&& str) noexcept;
 		TString& operator=(const_pointer_type cString);
 		void Reserve(const size_type size);
 		void Append(const_value_type element);
@@ -364,44 +364,50 @@ namespace jinstl
 	}
 
 	template <typename CHAR_TYPE>
-	TString<CHAR_TYPE>& TString<CHAR_TYPE>::operator=(const TString<CHAR_TYPE>& arr)
+	TString<CHAR_TYPE>& TString<CHAR_TYPE>::operator=(const TString<CHAR_TYPE>& str)
 	{
-		const size_type currentTStringElementCount = Length();
-		const size_type passedTStringElementCount = arr.Length();
-		if (currentTStringElementCount >= passedTStringElementCount)
+		if (this != &str)
 		{
-			std::memcpy(mStringBegin, arr.mStringBegin, sizeof(CHAR_TYPE) * passedTStringElementCount);
-			mStringEnd = mStringBegin + passedTStringElementCount;
-		}
-		else
-		{
-			Destroy();
+			const size_type currentTStringElementCount = Length();
+			const size_type passedTStringElementCount = str.Length();
+			if (currentTStringElementCount >= passedTStringElementCount)
+			{
+				std::memcpy(mStringBegin, str.mStringBegin, sizeof(CHAR_TYPE) * passedTStringElementCount);
+				mStringEnd = mStringBegin + passedTStringElementCount;
+			}
+			else
+			{
+				Destroy();
 
-			ResizeWithoutCopyOriginalString(passedTStringElementCount, passedTStringElementCount + 1);
+				ResizeWithoutCopyOriginalString(passedTStringElementCount, passedTStringElementCount + 1);
 
-			std::memcpy(mStringBegin, arr.mStringBegin, sizeof(CHAR_TYPE) * passedTStringElementCount);
+				std::memcpy(mStringBegin, str.mStringBegin, sizeof(CHAR_TYPE) * passedTStringElementCount);
+			}
 		}
 
 		return *this;
 	}
 
 	template <typename CHAR_TYPE>
-	TString<CHAR_TYPE>& TString<CHAR_TYPE>::operator=(TString<CHAR_TYPE>&& arr) noexcept
+	TString<CHAR_TYPE>& TString<CHAR_TYPE>::operator=(TString<CHAR_TYPE>&& str) noexcept
 	{
-		if (arr.mStringBegin == arr.mSmallSizeLocalBuffer)
+		if (this != &str)
 		{
-			*this = arr; // Copy assignment
-		}
-		else
-		{
-			Destroy();
+			if (str.mStringBegin == str.mSmallSizeLocalBuffer)
+			{
+				*this = str; // Copy assignment
+			}
+			else
+			{
+				Destroy();
 
-			mStringBegin = arr.mStringBegin;
-			mStringEnd = arr.mStringEnd;
-			mStringCapacityEnd = arr.mStringCapacityEnd;
-		}
+				mStringBegin = str.mStringBegin;
+				mStringEnd = str.mStringEnd;
+				mStringCapacityEnd = str.mStringCapacityEnd;
+			}
 
-		arr.NullifyBufferPtr();
+			str.NullifyBufferPtr();
+		}
 
 		return *this;
 	}
@@ -409,8 +415,11 @@ namespace jinstl
 	template <typename CHAR_TYPE>
 	TString<CHAR_TYPE>& TString<CHAR_TYPE>::operator=(const_pointer_type cString)
 	{
-		Destroy();
-		RangeInitialize(cString);
+		if (mStringBegin != &cString)
+		{
+			Destroy();
+			RangeInitialize(cString);
+		}
 	}
 
 	template <typename CHAR_TYPE>

@@ -284,33 +284,36 @@ namespace jinstl
 	template <typename ELEMENT_TYPE>
 	TArray<ELEMENT_TYPE>& TArray<ELEMENT_TYPE>::operator=(const TArray<ELEMENT_TYPE>& arr)
 	{
-		const size_type currentArrayElementCount = Count();
-		const size_type passedArrayElementCount = arr.Count();
-		if (currentArrayElementCount >= passedArrayElementCount)
+		if(this != &arr)
 		{
-			for (size_type elementIndex = 0; elementIndex < passedArrayElementCount; elementIndex++)
+			const size_type currentArrayElementCount = Count();
+			const size_type passedArrayElementCount = arr.Count();
+			if (currentArrayElementCount >= passedArrayElementCount)
 			{
-				mBufferBegin[elementIndex] = arr.mBufferBegin[elementIndex];
+				for (size_type elementIndex = 0; elementIndex < passedArrayElementCount; elementIndex++)
+				{
+					mBufferBegin[elementIndex] = arr.mBufferBegin[elementIndex];
+				}
+
+				for (size_type elementIndex = passedArrayElementCount; elementIndex < currentArrayElementCount; elementIndex++)
+				{
+					mBufferBegin[elementIndex].~ELEMENT_TYPE();
+				}
+
+				mBufferEnd = mBufferBegin + passedArrayElementCount;
 			}
-
-			for (size_type elementIndex = passedArrayElementCount; elementIndex < currentArrayElementCount; elementIndex++)
+			else
 			{
-				mBufferBegin[elementIndex].~ELEMENT_TYPE();
-			}
+				DestroyWithDestructor();
 
-			mBufferEnd = mBufferBegin + passedArrayElementCount;
-		}
-		else
-		{
-			DestroyWithDestructor();
+				mBufferBegin = reinterpret_cast<ELEMENT_TYPE*>(Allocate(passedArrayElementCount * sizeof(ELEMENT_TYPE)));
+				mBufferEnd = mBufferBegin + passedArrayElementCount;
+				mBufferCapacityEnd = mBufferEnd;
 
-			mBufferBegin = reinterpret_cast<ELEMENT_TYPE*>(Allocate(passedArrayElementCount * sizeof(ELEMENT_TYPE)));
-			mBufferEnd = mBufferBegin + passedArrayElementCount;
-			mBufferCapacityEnd = mBufferEnd;
-
-			for (size_type elementIndex = 0; elementIndex < passedArrayElementCount; elementIndex++)
-			{
-				new (mBufferBegin + elementIndex) ELEMENT_TYPE(arr.mBufferBegin[elementIndex]);
+				for (size_type elementIndex = 0; elementIndex < passedArrayElementCount; elementIndex++)
+				{
+					new (mBufferBegin + elementIndex) ELEMENT_TYPE(arr.mBufferBegin[elementIndex]);
+				}
 			}
 		}
 
@@ -320,13 +323,16 @@ namespace jinstl
 	template <typename ELEMENT_TYPE>
 	TArray<ELEMENT_TYPE>& TArray<ELEMENT_TYPE>::operator=(TArray<ELEMENT_TYPE>&& arr) noexcept
 	{
-		DestroyWithDestructor();
+		if (this != &arr)
+		{
+			DestroyWithDestructor();
 
-		mBufferBegin = arr.mBufferBegin;
-		mBufferEnd = arr.mBufferEnd;
-		mBufferCapacityEnd = arr.mBufferCapacityEnd;
+			mBufferBegin = arr.mBufferBegin;
+			mBufferEnd = arr.mBufferEnd;
+			mBufferCapacityEnd = arr.mBufferCapacityEnd;
 
-		arr.NullifyBufferPtr();
+			arr.NullifyBufferPtr();
+		}
 
 		return *this;
 	}
