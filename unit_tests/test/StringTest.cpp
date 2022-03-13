@@ -163,6 +163,30 @@ TEST(CharStringTest, MoveAssignment2)
 	EXPECT_EQ(str2.Length(), 7);
 }
 
+TEST(CharStringTest, CStringAssignment1)
+{
+	jinstl::String str1{ "abcdefg" };
+	str1 = "rgba";
+
+	EXPECT_EQ(str1.Length(), 4);
+	EXPECT_EQ(str1[0], 'r');
+	EXPECT_EQ(str1[1], 'g');
+	EXPECT_EQ(str1[2], 'b');
+	EXPECT_EQ(str1[3], 'a');
+}
+
+TEST(CharStringTest, CStringAssignment2)
+{
+	jinstl::String str1{ "a" };
+	str1 = "rgba";
+
+	EXPECT_EQ(str1.Length(), 4);
+	EXPECT_EQ(str1[0], 'r');
+	EXPECT_EQ(str1[1], 'g');
+	EXPECT_EQ(str1[2], 'b');
+	EXPECT_EQ(str1[3], 'a');
+}
+
 TEST(CharStringTest, Reserve1)
 {
 	jinstl::String str{};

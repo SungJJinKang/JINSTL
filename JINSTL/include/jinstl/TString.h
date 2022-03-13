@@ -415,11 +415,30 @@ namespace jinstl
 	template <typename CHAR_TYPE>
 	TString<CHAR_TYPE>& TString<CHAR_TYPE>::operator=(const_pointer_type cString)
 	{
-		if (mStringBegin != &cString)
+		if (mStringBegin != cString)
 		{
-			Destroy();
-			RangeInitialize(cString);
+			const size_type cStringLength = details::CStringLength(cString);
+
+			if(Capacity() >= cStringLength)
+			{
+				std::memcpy(mStringBegin, cString, sizeof(CHAR_TYPE) * cStringLength);
+				mStringEnd = mStringBegin + cStringLength;
+			}
+			else
+			{
+				// Why doesn't call Destroy function first? : To protect cString string data is destroyed ( when parameter cString is sub string of this object's string ) 
+				CHAR_TYPE* newCharacter = reinterpret_cast<CHAR_TYPE*>(Allocate(cStringLength * sizeof(CHAR_TYPE)));
+				std::memcpy(newCharacter, cString, sizeof(CHAR_TYPE) * cStringLength);
+
+				Destroy();
+
+				mStringBegin = newCharacter;
+				mStringEnd = newCharacter + cStringLength;
+				mStringCapacityEnd = newCharacter + cStringLength;
+			}
 		}
+
+		return *this;
 	}
 
 	template <typename CHAR_TYPE>
