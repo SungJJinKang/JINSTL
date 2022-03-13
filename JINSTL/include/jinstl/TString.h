@@ -565,7 +565,7 @@ namespace jinstl
 	template <typename CHAR_TYPE>
 	typename TString<CHAR_TYPE>::pointer_type TString<CHAR_TYPE>::CString()
 	{
-		if(Length() == Capacity())
+		if (Length() == Capacity())
 		{
 			Expand();
 		}
@@ -578,14 +578,8 @@ namespace jinstl
 	template <typename CHAR_TYPE>
 	typename TString<CHAR_TYPE>::const_pointer_type TString<CHAR_TYPE>::CString() const
 	{
-		if (Length() == Capacity())
-		{
-			Expand();
-		}
-
-		std::memset(mStringEnd, 0x00, sizeof(CHAR_TYPE)); // Set null-terminated character
-
-		return mStringBegin;
+		// TODO : Fix this. const function calls non cost function ( because CString function requires calling Expand function )
+		return const_cast<TString<CHAR_TYPE>*>(this)->CString();
 	}
 
 	template <typename CHAR_TYPE>

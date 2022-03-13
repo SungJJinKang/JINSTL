@@ -567,9 +567,17 @@ TEST(CharStringTest, Empty2)
 	EXPECT_EQ(str.Empty(), false);
 }
 
-TEST(CharStringTest, CString)
+TEST(CharStringTest, CString1)
 {
 	jinstl::String str{ "df" };
+	EXPECT_EQ(str.CString()[0], 'd');
+	EXPECT_EQ(str.CString()[1], 'f');
+	EXPECT_EQ(std::strlen(str.CString()), 2);
+}
+
+TEST(CharStringTest, CString2)
+{
+	const jinstl::String str{ "df" };
 	EXPECT_EQ(str.CString()[0], 'd');
 	EXPECT_EQ(str.CString()[1], 'f');
 	EXPECT_EQ(std::strlen(str.CString()), 2);
